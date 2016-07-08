@@ -1,0 +1,10 @@
+#pragma once
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#define STRICT
+#include <Windows.h>
+#include <WS2tcpip.h>
+#include <vector>
+#include <string>
+#include <thread>
+#include <memory>
