@@ -13,7 +13,6 @@ namespace libESRI
     bool SendWelcomeMessage();
     bool SendCurrentDirectory();
     bool HandleAutoComplete(const std::string& input);
-    bool HandleCommitCommand(const std::string& input);
     void AutoComplete(const std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates);
   private:
     toni::TcpClient* m_tcpClient;

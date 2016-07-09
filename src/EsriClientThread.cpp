@@ -97,21 +97,7 @@ namespace libESRI
       return m_tcpClient->Send(autoCompletedInput.c_str(), autoCompletedInput.length()) > 0;
     }
   }
-
-  bool EsriClientThread::HandleCommitCommand(const std::string& input)
-  {
-    std::string response = m_handler->OnCommitCommand(input.c_str());
-    if (!response.empty())
-    {
-      if (response[0] != '\n')
-        response = '\n' + response;
-    }
-    if (response[response.length() - 1] != '\n')
-      response += '\n';
-
-    return m_tcpClient->Send(response.c_str(), response.length()) > 0;
-  }
-
+  
   void EsriClientThread::EntryPoint()
   {
     if (!SendWelcomeMessage())
@@ -135,14 +121,10 @@ namespace libESRI
         case '\t':
           if (!HandleAutoComplete(inputBuffer))
             return;
-
           sentResponse = true;
           break;
         case '\n':
-          if (!HandleCommitCommand(inputBuffer))
-            return;
-          if (!SendCurrentDirectory())
-            return;
+          m_handler->OnCommitCommand(inputBuffer.c_str());
           sentResponse = true;
           break;
         default:

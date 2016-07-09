@@ -4,7 +4,7 @@
 #include "TcpClient.h"
 #include "SocketEndpointConverter.h"
 #include "EsriClientThread.h"
-
+#include "EsriTerminal.h"
 
 namespace libESRI
 {
@@ -53,7 +53,8 @@ namespace libESRI
     std::string threadName = "ESRI: " + IPv4WithPortFromSocketEndpoint(tcpClient->GetEndpoint());
     SetThreadName((unsigned long)-1, threadName.c_str());
 
-    auto* handlerForThisClient = m_HandlerFactory->CreateNewHandler();
+    EsriTerminal terminalForClient(tcpClient);
+    auto* handlerForThisClient = m_HandlerFactory->CreateNewHandler(&terminalForClient);
 
     EsriClientThread clientThread(tcpClient, handlerForThisClient);
     clientThread.EntryPoint();   
