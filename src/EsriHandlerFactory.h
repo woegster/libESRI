@@ -16,11 +16,13 @@ namespace libESRI
       fnHandlerOnProvideWelcomeMessage,
       fnHandlerOnGetCurrentDirectory,
       fnHandlerOnProvideCommands,
-      fnHandlerOnCommitCommand);
+      fnHandlerOnCommitCommand,
+      fnHandlerOnExit);
   private:
     fnHandlerOnProvideWelcomeMessage m_fnHandlerOnProvideWelcomeMessage;
     fnHandlerOnGetCurrentDirectory m_fnHandlerOnGetCurrentDirectory;
     fnHandlerOnProvideCommands m_fnHandlerOnProvideCommands;
     fnHandlerOnCommitCommand m_fnHandlerOnCommitCommand;
+    fnHandlerOnExit m_fnOnHandlerExit;
   };
 }

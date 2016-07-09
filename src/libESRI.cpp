@@ -22,9 +22,10 @@ void EsriSetHandlersForInstance(
   fnHandlerOnProvideWelcomeMessage onProvideWelcomeMessage,
   fnHandlerOnGetCurrentDirectory onGetCurrentDirectory,
   fnHandlerOnProvideCommands onProvideCommands,
-  fnHandlerOnCommitCommand onCommitCommand)
+  fnHandlerOnCommitCommand onCommitCommand,
+  fnHandlerOnExit onExit)
 {
-  auto* capiHandlerFactory = new libESRI::EsriHandlerFactory(onProvideWelcomeMessage, onGetCurrentDirectory, onProvideCommands, onCommitCommand);
+  auto* capiHandlerFactory = new libESRI::EsriHandlerFactory(onProvideWelcomeMessage, onGetCurrentDirectory, onProvideCommands, onCommitCommand, onExit);
   auto typedInstance = (libESRI::EsriInstance*)instance;
   typedInstance->SetAndTakeOwnershipOfHandlerFactory(capiHandlerFactory);
 }

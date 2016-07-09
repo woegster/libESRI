@@ -6,11 +6,13 @@ libESRI::EsriHandlerFactory::EsriHandlerFactory(
   fnHandlerOnProvideWelcomeMessage onProvideWelcomeMessage,
   fnHandlerOnGetCurrentDirectory onGetCurrentDirectory,
   fnHandlerOnProvideCommands onProvideCommands,
-  fnHandlerOnCommitCommand onCommitCommand)
+  fnHandlerOnCommitCommand onCommitCommand,
+  fnHandlerOnExit onExit)
   : m_fnHandlerOnProvideWelcomeMessage(onProvideWelcomeMessage)
   , m_fnHandlerOnGetCurrentDirectory(onGetCurrentDirectory)
   , m_fnHandlerOnProvideCommands(onProvideCommands)
   , m_fnHandlerOnCommitCommand(onCommitCommand)
+  , m_fnOnHandlerExit(onExit)
 {
 
 }
@@ -27,6 +29,8 @@ libESRI::EsriHandler * libESRI::EsriHandlerFactory::CreateNewHandler(EsriTermina
 
 void libESRI::EsriHandlerFactory::DeleteHandler(libESRI::EsriHandler * handler)
 {
+  if (m_fnOnHandlerExit)
+    m_fnOnHandlerExit(handler);
   delete handler;
 }
 
