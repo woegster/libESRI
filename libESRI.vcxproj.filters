@@ -63,6 +63,12 @@
     <ClInclude Include="src\EsriClientThread.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="include\IEsriTerminal.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EsriTerminal.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EsriInstance.cpp">
@@ -90,6 +96,9 @@
       <Filter>src\TCP</Filter>
     </ClCompile>
     <ClCompile Include="src\EsriClientThread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EsriTerminal.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
