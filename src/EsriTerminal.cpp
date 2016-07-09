@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "EsriTerminal.h"
+#include "TcpClient.h"
 
 namespace libESRI
 {

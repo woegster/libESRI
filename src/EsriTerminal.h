@@ -1,15 +1,17 @@
 #pragma once
-#include "../include/IEsriTerminal.h"
-#include "TcpClient.h"
+
+namespace toni
+{
+  class TcpClient;
+}
 
 namespace libESRI
 {
-  class EsriTerminal : public IEsriTerminal
+  class EsriTerminal
   {
   public:
     EsriTerminal(toni::TcpClient* tcpClient);
-    virtual bool EsriSendToTerminal(char const * const text, size_t textLen) override;
-    virtual ~EsriTerminal() {}
+    bool EsriSendToTerminal(char const * const text, size_t textLen);
   private:
     toni::TcpClient* m_tcpClient;
   };

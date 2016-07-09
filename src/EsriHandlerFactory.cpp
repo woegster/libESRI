@@ -15,7 +15,7 @@ libESRI::EsriHandlerFactory::EsriHandlerFactory(
 
 }
 
-libESRI::IEsriHandler * libESRI::EsriHandlerFactory::CreateNewHandler(IEsriTerminal * terminal)
+libESRI::EsriHandler * libESRI::EsriHandlerFactory::CreateNewHandler(EsriTerminal* terminal)
 {
   return new EsriHandler(
     m_fnHandlerOnProvideWelcomeMessage,
@@ -25,7 +25,7 @@ libESRI::IEsriHandler * libESRI::EsriHandlerFactory::CreateNewHandler(IEsriTermi
     terminal);
 }
 
-void libESRI::EsriHandlerFactory::DeleteHandler(libESRI::IEsriHandler * handler)
+void libESRI::EsriHandlerFactory::DeleteHandler(libESRI::EsriHandler * handler)
 {
   delete handler;
 }

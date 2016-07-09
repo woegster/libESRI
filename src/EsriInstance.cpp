@@ -1,14 +1,16 @@
 #include "stdafx.h"
 #include "EsriInstance.h"
-#include "SetThreadName.h"
-#include "TcpClient.h"
-#include "SocketEndpointConverter.h"
 #include "EsriClientThread.h"
 #include "EsriTerminal.h"
+#include "EsriHandlerFactory.h"
+#include "TcpClient.h"
+#include "SocketEndpointConverter.h"
+#include "SetThreadName.h"
+
 
 namespace libESRI
 {
-  void EsriInstance::SetAndTakeOwnershipOfHandlerFactory(IEsriHandlerFactory* newHandlerFactory)
+  void EsriInstance::SetAndTakeOwnershipOfHandlerFactory(EsriHandlerFactory* newHandlerFactory)
   {
     delete m_HandlerFactory;
     m_HandlerFactory = newHandlerFactory;
@@ -34,6 +36,7 @@ namespace libESRI
   EsriInstance::~EsriInstance()
   {
     delete m_HandlerFactory;
+    m_HandlerFactory = nullptr;
 
     if (m_NetworkAcceptThread && m_NetworkAcceptThread->joinable())
       m_NetworkAcceptThread->join();

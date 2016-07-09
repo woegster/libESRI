@@ -1,13 +1,14 @@
 #pragma once
 #include "TcpClient.h"
-#include "../include/IEsriHandler.h"
 
 namespace libESRI
 {
+  class EsriHandler;
+
   class EsriClientThread
   {
   public:
-    EsriClientThread(toni::TcpClient* tcpClient, IEsriHandler* handler);
+    EsriClientThread(toni::TcpClient* tcpClient, EsriHandler* handler);
     void EntryPoint();
   private:
     bool SendWelcomeMessage();
@@ -16,7 +17,7 @@ namespace libESRI
     void AutoComplete(const std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates);
   private:
     toni::TcpClient* m_tcpClient;
-    IEsriHandler* m_handler;
+    EsriHandler* m_handler;
   };
 }
 

@@ -21,20 +21,8 @@
     <ClInclude Include="include\libESRI.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\EsriExport.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IEsriInstance.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IEsriHandler.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="src\EsriInstance.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IEsriHandlerFactory.h">
-      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="src\SocketEndpoint.h">
       <Filter>src\TCP</Filter>
@@ -62,9 +50,6 @@
     </ClInclude>
     <ClInclude Include="src\EsriClientThread.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IEsriTerminal.h">
-      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="src\EsriTerminal.h">
       <Filter>src</Filter>

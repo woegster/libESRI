@@ -1,14 +1,16 @@
 #pragma once
 #include "../include/libESRI.h"
-#include "../include/IEsriHandlerFactory.h"
 
 namespace libESRI
 {
-  class EsriHandlerFactory : public IEsriHandlerFactory
+  class EsriTerminal;
+  class EsriHandler;
+
+  class EsriHandlerFactory
   {
   public:
-    virtual IEsriHandler* CreateNewHandler(IEsriTerminal * terminal) override;
-    virtual void DeleteHandler(IEsriHandler * handler) override;
+    EsriHandler* CreateNewHandler(EsriTerminal * terminal);
+    void DeleteHandler(EsriHandler * handler);
   public:
     EsriHandlerFactory(
       fnHandlerOnProvideWelcomeMessage,

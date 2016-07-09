@@ -1,29 +1,30 @@
 #pragma once
 #include "../include/libESRI.h"
-#include "../include/IEsriHandler.h"
-#include "../include/IEsriTerminal.h"
 
 namespace libESRI
 {
-  class EsriHandler : public IEsriHandler
+  class EsriTerminal;
+
+  class EsriHandler
   {
-  public:
-    virtual char const * const OnProvideWelcomeMessage() override;
-    virtual char const * const OnGetCurrentDirectory() override;
-    virtual char const * const OnProvideCommands() override;
-    virtual void OnCommitCommand(const char * const command) override;
   public:
     EsriHandler(
       fnHandlerOnProvideWelcomeMessage,
       fnHandlerOnGetCurrentDirectory,
       fnHandlerOnProvideCommands,
       fnHandlerOnCommitCommand,
-      libESRI::IEsriTerminal*);
+      libESRI::EsriTerminal*);
+
+    char const * const OnProvideWelcomeMessage();
+    char const * const OnGetCurrentDirectory();
+    char const * const OnProvideCommands();
+    void OnCommitCommand(const char * const command);
+    
   private:
     fnHandlerOnProvideWelcomeMessage m_fnHandlerOnProvideWelcomeMessage;
     fnHandlerOnGetCurrentDirectory m_fnHandlerOnGetCurrentDirectory;
     fnHandlerOnProvideCommands m_fnHandlerOnProvideCommands;
     fnHandlerOnCommitCommand m_fnHandlerOnCommitCommand;
-    libESRI::IEsriTerminal* m_Terminal;
+    libESRI::EsriTerminal* m_Terminal;
   };
 }

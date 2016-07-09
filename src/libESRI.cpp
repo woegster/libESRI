@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "../include/libESRI.h"
-#include "../include/IEsriHandlerFactory.h"
 #include "EsriInstance.h"
 #include "EsriHandlerFactory.h"
+#include "EsriTerminal.h"
 
 void* EsriCreateInstance()
 {
@@ -38,6 +38,6 @@ int EsriStartInstance(void* instance, unsigned short port, int maxConnections)
 
 int EsriSendToTerminal(void* terminal, char const * const message, int messageLength)
 {
-  auto typedTerminal = (libESRI::IEsriTerminal*)terminal;
+  auto typedTerminal = (libESRI::EsriTerminal*)terminal;
   return typedTerminal->EsriSendToTerminal(message, messageLength) ? 1 : 0;
 }

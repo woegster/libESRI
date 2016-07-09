@@ -19,12 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\IEsriHandler.h" />
-    <ClInclude Include="include\IEsriHandlerFactory.h" />
-    <ClInclude Include="include\IEsriInstance.h" />
-    <ClInclude Include="include\IEsriTerminal.h" />
     <ClInclude Include="include\libESRI.h" />
-    <ClInclude Include="include\EsriExport.h" />
     <ClInclude Include="src\EsriClientThread.h" />
     <ClInclude Include="src\EsriHandler.h" />
     <ClInclude Include="src\EsriHandlerFactory.h" />

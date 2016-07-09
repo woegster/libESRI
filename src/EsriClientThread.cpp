@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "EsriClientThread.h"
+#include "EsriHandler.h"
 #include "strOps.h"
-#include <utility>
-#include <functional>
 #include <algorithm>
 
 namespace libESRI
@@ -12,7 +11,7 @@ namespace libESRI
     return c >= 32 && c < 127;
   }
 
-  EsriClientThread::EsriClientThread(toni::TcpClient* tcpClient, IEsriHandler* handler)
+  EsriClientThread::EsriClientThread(toni::TcpClient* tcpClient, EsriHandler* handler)
     : m_tcpClient(tcpClient)
     , m_handler(handler)
   {
@@ -22,21 +21,38 @@ namespace libESRI
   bool EsriClientThread::SendWelcomeMessage()
   {
     char const * const welcomeMessage = m_handler->OnProvideWelcomeMessage();
-    int welcomeMessageLength = strlen(welcomeMessage);
+    if (welcomeMessage)
+    {
+      size_t welcomeMessageLength = strlen(welcomeMessage);
+      return m_tcpClient->Send(welcomeMessage, (int)welcomeMessageLength) > 0;
+    }
 
-    return m_tcpClient->Send(welcomeMessage, welcomeMessageLength) > 0;
+    return true;    
   }
 
   bool EsriClientThread::SendCurrentDirectory()
   {
-    std::string currentDirectory = m_handler->OnGetCurrentDirectory();
-    currentDirectory += ">";
-    return m_tcpClient->Send(currentDirectory.c_str(), (int)currentDirectory.length()) > 0;
+    char const * const curDir = m_handler->OnGetCurrentDirectory();
+    if (curDir)
+    {
+      std::string currentDirectory = curDir;
+      currentDirectory += ">";
+      return m_tcpClient->Send(currentDirectory.c_str(), (int)currentDirectory.length()) > 0;
+    }
+
+    return true;
   }
 
   void EsriClientThread::AutoComplete(const std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates)
   {
-    auto allCommands = toni::Tokenize<std::string>(m_handler->OnProvideCommands(), ";");
+    auto* allCommandsAsString = m_handler->OnProvideCommands();
+    if (!allCommandsAsString)
+    {
+      commonStartOfAllCandidates = input;
+      return;
+    }
+
+    auto allCommands = toni::Tokenize<std::string>(allCommandsAsString, ";");
     for (auto& candidate : allCommands)
     {
       if (!candidate.empty() && candidate.find(input) == 0)
@@ -89,12 +105,12 @@ namespace libESRI
       allCandidates += m_handler->OnGetCurrentDirectory();
       allCandidates += ">";
       allCandidates += autoCompletedInput;
-      return m_tcpClient->Send(allCandidates.c_str(), allCandidates.length()) > 0;
+      return m_tcpClient->Send(allCandidates.c_str(), (int)allCandidates.length()) > 0;
     }
     else
     {
       autoCompletedInput = "\r" + autoCompletedInput;
-      return m_tcpClient->Send(autoCompletedInput.c_str(), autoCompletedInput.length()) > 0;
+      return m_tcpClient->Send(autoCompletedInput.c_str(), (int)autoCompletedInput.length()) > 0;
     }
   }
   

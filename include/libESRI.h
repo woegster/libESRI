@@ -1,9 +1,15 @@
 #pragma once
-#include "EsriExport.h"
-
 /*
-  libESRI - A telnet framework library for applications
+libESRI - A telnet framework library for applications
 */
+
+#ifdef BUILDING_ESRI
+#define ESRIEXPORT __declspec(dllexport)
+#else
+#define ESRIEXPORT __declspec(dllimport)
+#endif
+
+#define ESRIAPI __stdcall
 
 typedef char const * const (ESRIAPI*fnHandlerOnProvideWelcomeMessage)(void* handler);
 typedef char const * const (ESRIAPI*fnHandlerOnGetCurrentDirectory)(void* handler);

@@ -6,7 +6,7 @@ libESRI::EsriHandler::EsriHandler(
   fnHandlerOnGetCurrentDirectory onGetCurrentDirectory,
   fnHandlerOnProvideCommands onProvideCommands,
   fnHandlerOnCommitCommand onCommitCommand,
-  libESRI::IEsriTerminal* terminal)
+  libESRI::EsriTerminal* terminal)
   : m_fnHandlerOnProvideWelcomeMessage(onProvideWelcomeMessage)
   , m_fnHandlerOnGetCurrentDirectory(onGetCurrentDirectory)
   , m_fnHandlerOnProvideCommands(onProvideCommands)
