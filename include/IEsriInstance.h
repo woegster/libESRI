@@ -3,6 +3,9 @@
 
 namespace libESRI
 {
+  //Instance of the library
+  //Application must set its implementation IEsriHandlerFactory
+  //Then start to bind it to a Tcpv4 Port
   class IEsriInstance
   {
   public:

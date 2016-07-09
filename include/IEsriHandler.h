@@ -2,6 +2,8 @@
 
 namespace libESRI
 {
+  //Must by implemented by the application
+  //Represents a connected client
   class IEsriHandler
   {
   public:

@@ -4,6 +4,8 @@
 
 namespace libESRI
 {
+  //Used by the Library to create a new handler
+  //Each connected clients gets its own handler
   class IEsriHandlerFactory
   {
   public:

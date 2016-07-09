@@ -2,6 +2,7 @@
 
 namespace libESRI
 {
+  //The terminal is provided by the library for the application
   class IEsriTerminal
   {
   public:
