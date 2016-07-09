@@ -24,16 +24,19 @@
     <ClInclude Include="include\IEsriInstance.h" />
     <ClInclude Include="include\libESRI.h" />
     <ClInclude Include="include\EsriExport.h" />
+    <ClInclude Include="src\EsriClientThread.h" />
     <ClInclude Include="src\EsriInstance.h" />
     <ClInclude Include="src\networkCommon.h" />
     <ClInclude Include="src\SetThreadName.h" />
     <ClInclude Include="src\SocketEndpoint.h" />
     <ClInclude Include="src\SocketEndpointConverter.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\strOps.h" />
     <ClInclude Include="src\TcpClient.h" />
     <ClInclude Include="src\TcpServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\EsriClientThread.cpp" />
     <ClCompile Include="src\EsriInstance.cpp" />
     <ClCompile Include="src\libESRI.cpp" />
     <ClCompile Include="src\SetThreadName.cpp" />

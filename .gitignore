@@ -243,3 +243,8 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/Bin_x64Debug
+/Bin_x64Release
+/Int_x64Debug
+/Int_x64Release/libESRI/libESRI.tlog
+*.tlog

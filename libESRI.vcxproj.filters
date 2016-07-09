@@ -57,6 +57,12 @@
     <ClInclude Include="src\SocketEndpointConverter.h">
       <Filter>src\TCP</Filter>
     </ClInclude>
+    <ClInclude Include="src\strOps.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EsriClientThread.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EsriInstance.cpp">
@@ -82,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="src\SocketEndpointConverter.cpp">
       <Filter>src\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EsriClientThread.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

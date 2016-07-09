@@ -11,6 +11,7 @@ namespace libESRI
   public:
     bool Start(unsigned short port, int maxConnections) override;
     void SetHandlerFactory(IEsriHandlerFactory* newHandlerFactory) override;
+    virtual ~EsriInstance();
   private:
     void AcceptThread_Routine();
     void ClientThread_Routine(toni::TcpClient* tcpClient);
