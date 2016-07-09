@@ -8,7 +8,7 @@ namespace libESRI
   {
   public:
     EsriTerminal(toni::TcpClient* tcpClient);
-    virtual bool SendToTerminal(char const * const text, size_t textLen) override;
+    virtual bool EsriSendToTerminal(char const * const text, size_t textLen) override;
     virtual ~EsriTerminal() {}
   private:
     toni::TcpClient* m_tcpClient;

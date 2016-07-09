@@ -26,6 +26,8 @@
     <ClInclude Include="include\libESRI.h" />
     <ClInclude Include="include\EsriExport.h" />
     <ClInclude Include="src\EsriClientThread.h" />
+    <ClInclude Include="src\EsriHandler.h" />
+    <ClInclude Include="src\EsriHandlerFactory.h" />
     <ClInclude Include="src\EsriInstance.h" />
     <ClInclude Include="src\EsriTerminal.h" />
     <ClInclude Include="src\networkCommon.h" />
@@ -39,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EsriClientThread.cpp" />
+    <ClCompile Include="src\EsriHandler.cpp" />
+    <ClCompile Include="src\EsriHandlerFactory.cpp" />
     <ClCompile Include="src\EsriInstance.cpp" />
     <ClCompile Include="src\EsriTerminal.cpp" />
     <ClCompile Include="src\libESRI.cpp" />

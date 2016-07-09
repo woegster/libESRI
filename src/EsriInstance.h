@@ -10,7 +10,7 @@ namespace libESRI
   {
   public:
     bool Start(unsigned short port, int maxConnections) override;
-    void SetHandlerFactory(IEsriHandlerFactory* newHandlerFactory) override;
+    void SetAndTakeOwnershipOfHandlerFactory(IEsriHandlerFactory* newHandlerFactory) override;
     virtual ~EsriInstance();
   private:
     void AcceptThread_Routine();

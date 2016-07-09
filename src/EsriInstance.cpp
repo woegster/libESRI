@@ -8,8 +8,9 @@
 
 namespace libESRI
 {
-  void EsriInstance::SetHandlerFactory(IEsriHandlerFactory* newHandlerFactory)
+  void EsriInstance::SetAndTakeOwnershipOfHandlerFactory(IEsriHandlerFactory* newHandlerFactory)
   {
+    delete m_HandlerFactory;
     m_HandlerFactory = newHandlerFactory;
   }
 
@@ -32,6 +33,8 @@ namespace libESRI
 
   EsriInstance::~EsriInstance()
   {
+    delete m_HandlerFactory;
+
     if (m_NetworkAcceptThread && m_NetworkAcceptThread->joinable())
       m_NetworkAcceptThread->join();
   }

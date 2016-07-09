@@ -5,3 +5,5 @@
 #else
 #define ESRIEXPORT __declspec(dllimport)
 #endif
+
+#define ESRIAPI __stdcall
