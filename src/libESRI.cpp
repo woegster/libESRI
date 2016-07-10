@@ -3,6 +3,7 @@
 #include "EsriInstance.h"
 #include "EsriHandlerFactory.h"
 #include "EsriTerminal.h"
+#include "EsriHandler.h"
 
 void* EsriCreateInstance()
 {
@@ -41,4 +42,20 @@ int EsriSendToTerminal(void* terminal, char const * const message, int messageLe
 {
   auto typedTerminal = (libESRI::EsriTerminal*)terminal;
   return typedTerminal->EsriSendToTerminal(message, messageLength) ? 1 : 0;
+}
+
+int EsriPromptTerminal(void* handler, void* terminal)
+{
+  auto typedHandler = (libESRI::EsriHandler*)handler;
+  auto typedTerminal = (libESRI::EsriTerminal*)terminal;
+
+  char const * const currentDir = typedHandler->OnGetCurrentDirectory();
+  if (currentDir)
+  {
+    std::string currentDirWithPrompt = currentDir;
+    currentDirWithPrompt += ">";
+    return typedTerminal->EsriSendToTerminal(currentDirWithPrompt.c_str(), currentDirWithPrompt.size()) ? 1 : 0;
+  }
+
+  return true;
 }
