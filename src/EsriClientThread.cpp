@@ -43,7 +43,7 @@ namespace libESRI
     return true;
   }
 
-  void EsriClientThread::AutoComplete(const std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates)
+  void EsriClientThread::AutoComplete(std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates)
   {
     auto* allCommandsAsString = m_handler->OnProvideCommands();
     if (!allCommandsAsString)
@@ -88,7 +88,7 @@ namespace libESRI
     }
   }
 
-  bool EsriClientThread::HandleAutoComplete(const std::string& input)
+  bool EsriClientThread::HandleAutoComplete(std::string& input)
   {
     std::string autoCompletedInput;
     std::vector<std::string> otherCandidates;
@@ -96,21 +96,28 @@ namespace libESRI
 
     if (otherCandidates.size() > 1)
     {
-      std::string allCandidates = "\n";
+      std::string allCandidates = "\r\n";
       for (auto& candidate : otherCandidates)
       {
-        allCandidates += '\t' + candidate + '\n';
+        allCandidates += '\t' + candidate + "\r\n";
       }
+
+      input = autoCompletedInput;
 
       allCandidates += m_handler->OnGetCurrentDirectory();
       allCandidates += ">";
-      allCandidates += autoCompletedInput;
+      allCandidates += input;
       return m_tcpClient->Send(allCandidates.c_str(), (int)allCandidates.length()) > 0;
     }
     else
     {
-      autoCompletedInput = "\r" + autoCompletedInput;
-      return m_tcpClient->Send(autoCompletedInput.c_str(), (int)autoCompletedInput.length()) > 0;
+      input = autoCompletedInput;
+
+      std::string autoCompletedInputWithPrompt = "\r";
+      autoCompletedInputWithPrompt += m_handler->OnGetCurrentDirectory();
+      autoCompletedInputWithPrompt += "\>";
+      autoCompletedInputWithPrompt += input;
+      return m_tcpClient->Send(autoCompletedInputWithPrompt.c_str(), (int)autoCompletedInputWithPrompt.length()) > 0;
     }
   }
   
@@ -125,30 +132,40 @@ namespace libESRI
 
     int recvVal = 0;
     std::vector<char> receiveBuffer(1024);
+    std::string inputBuffer;
     while ((recvVal = m_tcpClient->Recv(&receiveBuffer[0], (int)receiveBuffer.size())) > 0)
     {
-      std::string inputBuffer;
       bool sentResponse = false;
-      for (size_t i = 0; i < recvVal && !sentResponse; i++)
+      if (recvVal > 1 && receiveBuffer[0] == 27) //27 = ESC
       {
-        const char curChar = receiveBuffer[i];
-        switch (curChar)
+        std::string controlBuffer;
+        controlBuffer.assign(receiveBuffer.begin() + 1, receiveBuffer.end());
+      }
+      else
+      {
+        for (size_t i = 0; i < recvVal && !sentResponse; i++)
         {
-        case '\t':
-          if (!HandleAutoComplete(inputBuffer))
-            return;
-          sentResponse = true;
-          break;
-        case '\n':
-          m_handler->OnCommitCommand(inputBuffer.c_str());
-          sentResponse = true;
-          break;
-        default:
-          if (IsTextOrNumber(curChar))
-            inputBuffer += curChar;
-          break;
+          const char curChar = receiveBuffer[i];
+          switch (curChar)
+          {
+          case '\t':
+            if (!HandleAutoComplete(inputBuffer))
+              return;
+            sentResponse = true;
+            break;
+          case '\n':
+            m_handler->OnCommitCommand(inputBuffer.c_str());
+            inputBuffer.clear();
+            sentResponse = true;
+            break;
+          default:
+            if (IsTextOrNumber(curChar))
+              inputBuffer += curChar;
+            break;
+          }
         }
       }
+      
     }
   }
 }

@@ -13,8 +13,8 @@ namespace libESRI
   private:
     bool SendWelcomeMessage();
     bool SendCurrentDirectory();
-    bool HandleAutoComplete(const std::string& input);
-    void AutoComplete(const std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates);
+    bool HandleAutoComplete(std::string& input);
+    void AutoComplete(std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates);
   private:
     toni::TcpClient* m_tcpClient;
     EsriHandler* m_handler;
