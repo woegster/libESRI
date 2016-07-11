@@ -115,7 +115,7 @@ namespace libESRI
 
       std::string autoCompletedInputWithPrompt = "\r";
       autoCompletedInputWithPrompt += m_handler->OnGetCurrentDirectory();
-      autoCompletedInputWithPrompt += "\>";
+      autoCompletedInputWithPrompt += ">";
       autoCompletedInputWithPrompt += input;
       return m_tcpClient->Send(autoCompletedInputWithPrompt.c_str(), (int)autoCompletedInputWithPrompt.length()) > 0;
     }
@@ -139,7 +139,12 @@ namespace libESRI
       if (recvVal > 1 && receiveBuffer[0] == 27) //27 = ESC
       {
         std::string controlBuffer;
-        controlBuffer.assign(receiveBuffer.begin() + 1, receiveBuffer.end());
+        controlBuffer.assign(receiveBuffer.begin() + 1, receiveBuffer.begin() + recvVal);
+
+        if (controlBuffer.compare("clearInputBuffer") == 0)
+        {
+          inputBuffer.clear();
+        }
       }
       else
       {
