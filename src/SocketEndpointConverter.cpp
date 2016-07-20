@@ -3,7 +3,7 @@
 
 namespace toni
 {
-  SocketEndpoint SocketEndpointFromIPv4(const std::string& ipv4, USHORT port)
+  SocketEndpoint SocketEndpointFromIPv4(const std::string& ipv4, uint16_t port)
   {
     SocketEndpoint retVal;
 
@@ -16,7 +16,7 @@ namespace toni
     return retVal;
   }
 
-  SocketEndpoint SocketEndpointFromIPv6(const std::string& ipv6, USHORT port)
+  SocketEndpoint SocketEndpointFromIPv6(const std::string& ipv6, uint16_t port)
   {
     SocketEndpoint retVal;
 

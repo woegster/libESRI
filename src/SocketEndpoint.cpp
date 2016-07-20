@@ -15,7 +15,7 @@ namespace toni
     m_SockAddr.ipv4 = inv4;
   }
 
-  void SocketEndpoint::Set(const ULONG inv4, USHORT port)
+  void SocketEndpoint::Set(const uint32_t inv4, uint16_t port)
   {
     ZeroOutSockAddr();
     m_addressFamily = AF_INET;
@@ -31,7 +31,7 @@ namespace toni
     m_SockAddr.ipv6 = inv6;
   }
 
-  void SocketEndpoint::Set(const in6_addr& inv6, USHORT port)
+  void SocketEndpoint::Set(const in6_addr& inv6, uint16_t port)
   {
     ZeroOutSockAddr();
     m_addressFamily = AF_INET6;
