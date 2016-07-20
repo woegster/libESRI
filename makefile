@@ -1,6 +1,6 @@
 # Declaration of variables
 CC = g++
-CC_FLAGS = -w -std=c++17 -D BUILDING_ESRI -lpthread -fvisibility=hidden -fPIC
+CC_FLAGS = -w -std=c++11 -D BUILDING_ESRI -lpthread -fvisibility=hidden -fPIC
 LINKER=g++
 
 # File names
