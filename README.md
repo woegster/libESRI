@@ -9,3 +9,4 @@ The application can then be controlled using a telnet client.
 - **Multiuser support**. Every TCP Connection represents a user, which has its own handler
 - **Unsafe**. It's still Telnet without any authentication or identification of incoming connections.
 - **No dependencies**. Compile the library once, use it from any application
+- **Multiplatform**. Compiles on Windows and g++ with -std=c++11 support
