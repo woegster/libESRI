@@ -5,6 +5,8 @@
 #include "EsriTerminal.h"
 #include "EsriHandler.h"
 
+extern "C"
+{
 void* EsriCreateInstance()
 {
 #ifdef _WINDOWS
@@ -13,7 +15,7 @@ void* EsriCreateInstance()
 #endif
   return new libESRI::EsriInstance();
 }
-
+}
 void EsriDeleteInstance(void* instance)
 {
 #ifdef _WINDOWS
