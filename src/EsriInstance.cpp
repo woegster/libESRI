@@ -25,7 +25,7 @@ namespace libESRI
 
       if (m_TcpServer.Start(localhost, maxConnections))
       {
-        m_NetworkAcceptThread = std::make_unique<std::thread>(&EsriInstance::AcceptThread_Routine, this);
+        m_NetworkAcceptThread.reset(new std::thread(&EsriInstance::AcceptThread_Routine, this));
         return true;
       }
     }
