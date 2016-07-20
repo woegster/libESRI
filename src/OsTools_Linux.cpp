@@ -3,7 +3,7 @@
 
 namespace libESRI
 {
-  static uint64_t OsTools::GetMemUsageOfCurrentProcessBytes()
+  uint64_t OsTools::GetMemUsageOfCurrentProcessBytes()
   {
     return 7;
   }

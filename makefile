@@ -7,7 +7,7 @@ ARM_LINKER = arm-linux-gnueabihf-g++-4.7
 
 # File names
 EXEC = libESRI.so
-SOURCES = $(filter-out src/stdafx.cpp, $(wildcard src/*.cpp))
+SOURCES = $(filter-out src/stdafx.cpp src/OsTools_Windows.cpp, $(wildcard src/*.cpp))
 OBJECTS = $(SOURCES:.cpp=.o)
 OBJECTS_ARM = $(SOURCES:.cpp=.oarm)
 

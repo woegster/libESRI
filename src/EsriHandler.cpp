@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "EsriHandler.h"
+#include "string.h"
 
 libESRI::EsriHandler::EsriHandler(
   fnHandlerOnProvideWelcomeMessage onProvideWelcomeMessage,
