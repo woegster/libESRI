@@ -7,14 +7,18 @@
 
 void* EsriCreateInstance()
 {
+#ifdef _WINDOWS
   WSADATA wDat = { 0 };
   WSAStartup(MAKEWORD(2, 2), &wDat);
+#endif
   return new libESRI::EsriInstance();
 }
 
 void EsriDeleteInstance(void* instance)
 {
+#ifdef _WINDOWS
   WSACleanup();
+#endif
   delete instance;
 }
 

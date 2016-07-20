@@ -3,6 +3,7 @@
 libESRI - A telnet framework library for applications
 */
 
+/*
 #ifdef BUILDING_ESRI
 #define ESRIEXPORT __declspec(dllexport)
 #else
@@ -10,6 +11,10 @@ libESRI - A telnet framework library for applications
 #endif
 
 #define ESRIAPI __stdcall
+*/
+
+#define ESRIAPI
+#define ESRIEXPORT
 
 typedef char const * const (ESRIAPI*fnHandlerOnProvideWelcomeMessage)(void* handler);
 typedef char const * const (ESRIAPI*fnHandlerOnGetCurrentDirectory)(void* handler);

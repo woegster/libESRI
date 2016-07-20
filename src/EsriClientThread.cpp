@@ -3,6 +3,7 @@
 #include "EsriHandler.h"
 #include "strOps.h"
 #include <algorithm>
+#include <string.h>
 
 namespace libESRI
 {

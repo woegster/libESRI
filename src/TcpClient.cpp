@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TcpClient.h"
+#include <unistd.h>
 
 namespace toni
 {
@@ -67,7 +68,7 @@ namespace toni
   {
     if (m_connectedSocket != INVALID_SOCKET)
     {
-      closesocket(m_connectedSocket);
+      close(m_connectedSocket);
       m_connectedSocket = INVALID_SOCKET;
     }
   }

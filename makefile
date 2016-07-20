@@ -1,15 +1,16 @@
 # Declaration of variables
 CC = g++
-CC_FLAGS = -w -std=c++11
+CC_FLAGS = -w -std=c++17 -D BUILDING_ESRI -lpthread
+LINKER=ar
 
 # File names
-EXEC = run
+EXEC = libESRI.a
 SOURCES = $(filter-out src/stdafx.cpp, $(wildcard src/*.cpp))
 OBJECTS = $(SOURCES:.cpp=.o)
 
 # Main target
 $(EXEC): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXEC)
+	$(LINKER) rcs $(EXEC) $(OBJECTS)
 
 # To obtain object files
 %.o: %.cpp

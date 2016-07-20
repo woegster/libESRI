@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SocketEndpointConverter.h"
+#include <arpa/inet.h>
 
 namespace toni
 {

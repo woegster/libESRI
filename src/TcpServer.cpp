@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TcpServer.h"
 #include "TcpClient.h"
+#include <unistd.h>
 
 namespace toni
 {
@@ -37,7 +38,7 @@ namespace toni
     if (m_listenSocket != INVALID_SOCKET)
     {
       char sockAddrData[sizeof(sockaddr_in6)] = { 0 };
-      int sockAddrData_Size = sizeof(sockAddrData);
+      unsigned int sockAddrData_Size = sizeof(sockAddrData);
       SOCKET remoteSocket = accept(m_listenSocket, reinterpret_cast<sockaddr*>(sockAddrData), &sockAddrData_Size);
       
       if (remoteSocket != INVALID_SOCKET)
@@ -64,7 +65,7 @@ namespace toni
   {
     if (m_listenSocket != INVALID_SOCKET)
     {
-      closesocket(m_listenSocket);
+      close(m_listenSocket);
       m_listenSocket = INVALID_SOCKET;
     }
   }

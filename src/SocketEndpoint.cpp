@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SocketEndpoint.h"
+#include <string.h>
 
 namespace toni
 {

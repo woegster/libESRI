@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SetThreadName.h"
-#include <windows.h>
+
+#ifdef _WINDOWS
 
 const DWORD MS_VC_EXCEPTION = 0x406D1388;
 #pragma pack(push,8)
@@ -12,9 +13,11 @@ typedef struct tagTHREADNAME_INFO
   DWORD dwFlags; // Reserved for future use, must be zero.
 } THREADNAME_INFO;
 #pragma pack(pop)
+#endif
 
 void SetThreadName(unsigned long dwThreadID, const char* threadName)
 {
+#ifdef _WINDOWS
   THREADNAME_INFO info;
   info.dwType = 0x1000;
   info.szName = threadName;
@@ -30,4 +33,5 @@ void SetThreadName(unsigned long dwThreadID, const char* threadName)
   {
   }
 #pragma warning(pop)
+#endif
 }
