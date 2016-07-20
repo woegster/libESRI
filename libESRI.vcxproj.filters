@@ -60,6 +60,9 @@
     <ClInclude Include="src\EsriHandler.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EsriInstance.cpp">

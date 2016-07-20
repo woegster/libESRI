@@ -26,6 +26,7 @@
     <ClInclude Include="src\EsriInstance.h" />
     <ClInclude Include="src\EsriTerminal.h" />
     <ClInclude Include="src\networkCommon.h" />
+    <ClInclude Include="src\Platform.h" />
     <ClInclude Include="src\SetThreadName.h" />
     <ClInclude Include="src\SocketEndpoint.h" />
     <ClInclude Include="src\SocketEndpointConverter.h" />

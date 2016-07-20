@@ -1,5 +1,5 @@
 #pragma once
-#include <WS2tcpip.h>
+#include "Platform.h"
 
 namespace toni
 {

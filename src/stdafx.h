@@ -1,9 +1,5 @@
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#define STRICT
-#include <Windows.h>
-#include <WS2tcpip.h>
+#include "Platform.h"
 #include <vector>
 #include <string>
 #include <thread>
