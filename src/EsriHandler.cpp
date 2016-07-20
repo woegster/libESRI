@@ -50,3 +50,8 @@ void libESRI::EsriHandler::OnCommitCommand(const char * const command)
     m_fnHandlerOnCommitCommand(this, m_Terminal, command);
   }
 }
+
+void libESRI::EsriHandler::SendToTerminal(const char * const text) const
+{
+  EsriSendToTerminal(m_Terminal, text, strlen(text));
+}

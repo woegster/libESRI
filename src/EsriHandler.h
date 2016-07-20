@@ -19,6 +19,7 @@ namespace libESRI
     char const * const OnGetCurrentDirectory();
     char const * const OnProvideCommands();
     void OnCommitCommand(const char * const command);
+    void SendToTerminal(const char * const text) const;
     
   private:
     fnHandlerOnProvideWelcomeMessage m_fnHandlerOnProvideWelcomeMessage;

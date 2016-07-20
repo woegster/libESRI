@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EsriClientThread.h"
 #include "EsriHandler.h"
+#include "EsriInternalCommands.h"
 #include "strOps.h"
 #include <algorithm>
 #include <string.h>
@@ -16,7 +17,12 @@ namespace libESRI
     : m_tcpClient(tcpClient)
     , m_handler(handler)
   {
+    m_InternalHandler = new EsriInternalCommands(handler);
+  }
 
+  EsriClientThread::~EsriClientThread()
+  {
+    delete m_InternalHandler;
   }
 
   bool EsriClientThread::SendWelcomeMessage()
@@ -53,7 +59,9 @@ namespace libESRI
       return;
     }
 
-    auto allCommands = toni::Tokenize<std::string>(allCommandsAsString, ";");
+    std::string allCommandsStringBuffer = allCommandsAsString;
+    allCommandsStringBuffer += m_InternalHandler->ProvideInternalCommands();
+    auto allCommands = toni::Tokenize<std::string>(allCommandsStringBuffer, ";");
     for (auto& candidate : allCommands)
     {
       if (!candidate.empty() && candidate.find(input) == 0)
@@ -137,41 +145,31 @@ namespace libESRI
     while ((recvVal = m_tcpClient->Recv(&receiveBuffer[0], (int)receiveBuffer.size())) > 0)
     {
       bool sentResponse = false;
-      if (recvVal > 1 && receiveBuffer[0] == 27) //27 = ESC
+      for (size_t i = 0; i < recvVal && !sentResponse; i++)
       {
-        std::string controlBuffer;
-        controlBuffer.assign(receiveBuffer.begin() + 1, receiveBuffer.begin() + recvVal);
-
-        if (controlBuffer.compare("clearInputBuffer") == 0)
+        const char curChar = receiveBuffer[i];
+        switch (curChar)
         {
+        case '\t':
+          if (!HandleAutoComplete(inputBuffer))
+            return;
           inputBuffer.clear();
-        }
-      }
-      else
-      {
-        for (size_t i = 0; i < recvVal && !sentResponse; i++)
-        {
-          const char curChar = receiveBuffer[i];
-          switch (curChar)
+          sentResponse = true;
+          break;
+        case '\n':
+          if (!m_InternalHandler->ExecuteInternalCommand(inputBuffer))
           {
-          case '\t':
-            if (!HandleAutoComplete(inputBuffer))
-              return;
-            sentResponse = true;
-            break;
-          case '\n':
             m_handler->OnCommitCommand(inputBuffer.c_str());
-            inputBuffer.clear();
-            sentResponse = true;
-            break;
-          default:
-            if (IsTextOrNumber(curChar))
-              inputBuffer += curChar;
-            break;
-          }
+          }      
+          inputBuffer.clear();
+          sentResponse = true;
+          break;
+        default:
+          if (IsTextOrNumber(curChar))
+            inputBuffer += curChar;
+          break;
         }
       }
-      
     }
   }
 }
