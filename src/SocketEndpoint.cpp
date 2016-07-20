@@ -56,7 +56,7 @@ namespace toni
     return nullptr;
   }
 
-  ADDRESS_FAMILY SocketEndpoint::GetAddressFamily() const
+  uint16_t SocketEndpoint::GetAddressFamily() const
   {
     return m_addressFamily;
   }
