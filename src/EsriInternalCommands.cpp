@@ -56,7 +56,7 @@ namespace libESRI
     double memSizeMiB = (double)OsTools::GetMemUsageOfCurrentProcessBytes();
     memSizeMiB /= 1024.0 * 1024.0;
     std::stringstream formatter;
-    formatter << "\r\nHost App Memory Usage: " << std::setw(7) << std::setfill(' ') << std::setprecision(2) << memSizeMiB << " MiB\r\n";
+    formatter << "\r\nHost App Memory Usage: " << std::setw(12) << std::setfill(' ') << std::setprecision(7) << memSizeMiB << " MiB\r\n";
     return formatter.str();
   }
 }

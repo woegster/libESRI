@@ -30,3 +30,5 @@ arm: $(OBJECTS_ARM)
 %.oarm: %.cpp
 	$(ARM_CC) -c $(CC_FLAGS) $< -o $@
 
+install:
+	cp $(EXEC) /usr/lib/
