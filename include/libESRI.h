@@ -6,7 +6,7 @@ libESRI - A telnet framework library for applications
 
 #ifdef BUILDING_ESRI
   #ifdef _WINDOWS
-    #define ESRIEXPORT __declpspec(dllexport)
+    #define ESRIEXPORT __declspec(dllexport)
   #else
     #define ESRIEXPORT __attribute__((visibility ("default")))
   #endif
