@@ -162,6 +162,7 @@ namespace libESRI
 
   int EsriClientThread::OnShellWantsToWrite(const char* sourceData, int sourceDataSize)
   {
+    //OutputDebugStringA(sourceData);
     telnet_send(m_TelnetLib, sourceData, sourceDataSize);
     return sourceDataSize;
   }
@@ -181,12 +182,10 @@ namespace libESRI
     };
 
     static const telnet_telopt_t telopts[] = {
-      { TELNET_TELOPT_ECHO,	TELNET_WILL, TELNET_DONT }, //TELNET_TELOPT_LINEMODE
-      { TELNET_TELOPT_LINEMODE,	TELNET_WILL, TELNET_DONT },
+      { TELNET_TELOPT_ECHO,	TELNET_WILL, TELNET_DONT },
+      { TELNET_TELOPT_SGA,	TELNET_WILL, TELNET_DO },
       { -1, 0, 0 }
     };
-
-
 
     m_TelnetLib = telnet_init(telopts, TelnetEvent_proxy, 0, this);
 
