@@ -10,7 +10,8 @@ extern "C"
 void* EsriCreateInstance()
 {
 #ifdef _WINDOWS
-  WSADATA wDat = { 0 };
+  WSADATA wDat;
+  memset(&wDat, 0, sizeof(WSADATA));
   WSAStartup(MAKEWORD(2, 2), &wDat);
 #endif
   return new libESRI::EsriInstance();
@@ -21,7 +22,8 @@ void EsriDeleteInstance(void* instance)
 #ifdef _WINDOWS
   WSACleanup();
 #endif
-  delete instance;
+  libESRI::EsriInstance* typedInstance = static_cast<libESRI::EsriInstance*>(instance);
+  delete typedInstance;
 }
 
 void EsriSetHandlersForInstance(
