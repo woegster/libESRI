@@ -16,6 +16,13 @@ namespace toni
       m_listenSocket = socket(localEndpoint.GetAddressFamily(), SOCK_STREAM, IPPROTO_TCP);
       if (m_listenSocket != INVALID_SOCKET)
       {
+        const int enable = 1;
+        if (setsockopt(m_listenSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&enable), sizeof(enable)) < 0)
+        {
+          CleanUp();
+          return false;
+        }
+
         if (bind(m_listenSocket, localEndpoint.GetIpGeneric(), static_cast<int>(localEndpoint.GetGenericIpSize())) == 0)
         {
           if (listen(m_listenSocket, Backlog) == 0)
@@ -25,10 +32,11 @@ namespace toni
           }            
         }
 
-        CleanUp();
+        
       }
     }
 
+    CleanUp();
     return false;
   }
 
