@@ -8,6 +8,20 @@ SET(CMAKE_CXX_STANDARD 11)
 
 #3rd party telnet
 add_library(Telnet 3rdparty/libtelnet/libtelnet.c)
+set_property(TARGET Telnet PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+#3rd party nthshell
+SET(SOURCES_NTSHELL
+  3rdparty/ntshell/ntlibc.c
+  3rdparty/ntshell/ntshell.c
+  3rdparty/ntshell/text_editor.c
+  3rdparty/ntshell/text_history.c
+  3rdparty/ntshell/vtrecv.c
+  3rdparty/ntshell/vtsend.c
+)
+
+add_library(nthshell ${SOURCES_NTSHELL})
+set_property(TARGET nthshell PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #main library
 SET(TARGET ESRI)
@@ -39,7 +53,7 @@ endif()
 add_definitions(-DBUILDING_ESRI)
 include_directories(3rdparty/libtelnet)
 add_library(${TARGET} SHARED ${SOURCES})
-target_link_libraries(${TARGET} Telnet)
+target_link_libraries(${TARGET} Telnet nthshell)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
