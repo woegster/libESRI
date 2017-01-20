@@ -15,13 +15,13 @@ typedef struct tagTHREADNAME_INFO
 #pragma pack(pop)
 #endif
 
-void SetThreadName(unsigned long dwThreadID, const char* threadName)
+void SetThreadNameOfCurrentThread(const char* threadName)
 {
 #ifdef _WINDOWS
   THREADNAME_INFO info;
   info.dwType = 0x1000;
   info.szName = threadName;
-  info.dwThreadID = dwThreadID;
+  info.dwThreadID = -1;
   info.dwFlags = 0;
 #pragma warning(push)
 #pragma warning(disable: 6320 6322)
@@ -33,5 +33,7 @@ void SetThreadName(unsigned long dwThreadID, const char* threadName)
   {
   }
 #pragma warning(pop)
+#else
+  pthread_setname_np(pthread_self(), threadName);
 #endif
 }
