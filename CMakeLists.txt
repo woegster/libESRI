@@ -51,7 +51,9 @@ elseif ( UNIX )
 endif()
 
 add_definitions(-DBUILDING_ESRI)
-include_directories(3rdparty/libtelnet)
+include_directories(
+  3rdparty/libtelnet
+  3rdparty/ntshell)
 add_library(${TARGET} SHARED ${SOURCES})
 target_link_libraries(${TARGET} Telnet nthshell)
 
