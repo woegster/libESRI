@@ -4,12 +4,16 @@ cmake_policy(SET CMP0011 OLD)
 include(cotire)
 project (libESRI)
 
+SET(CMAKE_CXX_STANDARD 11)
+
+#3rd party telnet
+add_library(Telnet 3rdparty/libtelnet/libtelnet.c)
+
+#main library
 SET(TARGET ESRI)
 if ( WIN32 )
   SET(TARGET libESRI) #windows dlls are not prefixed with dll, add it here for unified output names
 endif()
-
-SET(CMAKE_CXX_STANDARD 11)
 
 SET(SOURCES 
   src/EsriClientThread.cpp
@@ -33,7 +37,9 @@ elseif ( UNIX )
 endif()
 
 add_definitions(-DBUILDING_ESRI)
+include_directories(3rdparty/libtelnet)
 add_library(${TARGET} SHARED ${SOURCES})
+target_link_libraries(${TARGET} Telnet)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -46,3 +52,8 @@ endif()
 set_target_properties(${TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/stdafx.h")
 set_target_properties(${TARGET} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
 cotire(${TARGET})
+
+#sample app
+include_directories(include)
+add_executable(sample sample/SampleApp.cpp)
+target_link_libraries(sample ${TARGET})
