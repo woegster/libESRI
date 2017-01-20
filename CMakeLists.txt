@@ -4,6 +4,11 @@ cmake_policy(SET CMP0011 OLD)
 include(cotire)
 project (libESRI)
 
+SET(TARGET ESRI)
+if ( WIN32 )
+  SET(TARGET libESRI) #windows dlls are not prefixed with dll, add it here for unified output names
+endif()
+
 SET(CMAKE_CXX_STANDARD 11)
 
 SET(SOURCES 
@@ -28,16 +33,16 @@ elseif ( UNIX )
 endif()
 
 add_definitions(-DBUILDING_ESRI)
-add_library(libESRI SHARED ${SOURCES})
+add_library(${TARGET} SHARED ${SOURCES})
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(libESRI Threads::Threads)
+target_link_libraries(${TARGET} Threads::Threads)
 
 if ( WIN32 )
-  target_link_libraries(libESRI psapi.lib ws2_32.lib)
+  target_link_libraries(${TARGET} psapi.lib ws2_32.lib)
 endif()
 
-set_target_properties(libESRI PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/stdafx.h")
-set_target_properties(libESRI PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-cotire(libESRI)
+set_target_properties(${TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/stdafx.h")
+set_target_properties(${TARGET} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
+cotire(${TARGET})
