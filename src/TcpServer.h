@@ -1,5 +1,6 @@
 #pragma once
 #include "SocketEndpoint.h"
+#include <memory>
 
 namespace toni
 {
@@ -10,7 +11,7 @@ namespace toni
   public:
     ~TcpServer();
     bool Start(const SocketEndpoint& localEndpoint, int Backlog);
-    TcpClient* Accept();
+    std::unique_ptr<TcpClient> Accept();
   private:
     void CleanUp();
   private:

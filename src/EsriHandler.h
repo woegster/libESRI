@@ -13,7 +13,9 @@ namespace libESRI
       fnHandlerOnGetCurrentDirectory,
       fnHandlerOnProvideCommands,
       fnHandlerOnCommitCommand,
-      libESRI::EsriTerminal*);
+      fnHandlerOnExit,
+      libESRI::EsriTerminal&);
+    ~EsriHandler();
 
     char const * const OnProvideWelcomeMessage();
     char const * const OnGetCurrentDirectory();
@@ -26,6 +28,7 @@ namespace libESRI
     fnHandlerOnGetCurrentDirectory m_fnHandlerOnGetCurrentDirectory;
     fnHandlerOnProvideCommands m_fnHandlerOnProvideCommands;
     fnHandlerOnCommitCommand m_fnHandlerOnCommitCommand;
-    libESRI::EsriTerminal* m_Terminal;
+    fnHandlerOnExit m_fnHandlerOnExit;
+    libESRI::EsriTerminal& m_Terminal;
   };
 }

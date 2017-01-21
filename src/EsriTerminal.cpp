@@ -4,7 +4,7 @@
 
 namespace libESRI
 {
-  EsriTerminal::EsriTerminal(toni::TcpClient* tcpClient)
+  EsriTerminal::EsriTerminal(toni::TcpClient& tcpClient)
     : m_tcpClient(tcpClient)
   {
 
@@ -12,6 +12,6 @@ namespace libESRI
 
   bool EsriTerminal::EsriSendToTerminal(char const * const text, size_t textLen)
   {
-    return m_tcpClient->Send(text, (int)textLen) > 0;
+    return m_tcpClient.Send(text, (int)textLen) > 0;
   }
 }

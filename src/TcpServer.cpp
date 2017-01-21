@@ -40,7 +40,7 @@ namespace toni
     return false;
   }
 
-  TcpClient* TcpServer::Accept()
+  std::unique_ptr<TcpClient> TcpServer::Accept()
   {
     if (m_listenSocket != INVALID_SOCKET)
     {
@@ -61,7 +61,7 @@ namespace toni
           break;
         }
 
-        return new TcpClient(remoteSocket, clientEndpoint);
+        return std::unique_ptr<TcpClient>(new TcpClient(remoteSocket, clientEndpoint));
       }
     }
 

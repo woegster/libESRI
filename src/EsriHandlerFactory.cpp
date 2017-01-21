@@ -17,21 +17,14 @@ libESRI::EsriHandlerFactory::EsriHandlerFactory(
 
 }
 
-libESRI::EsriHandler * libESRI::EsriHandlerFactory::CreateNewHandler(EsriTerminal* terminal)
+std::unique_ptr<libESRI::EsriHandler> libESRI::EsriHandlerFactory::CreateNewHandler(EsriTerminal& terminal)
 {
-  return new EsriHandler(
+  return std::unique_ptr<libESRI::EsriHandler>(new EsriHandler(
     m_fnHandlerOnProvideWelcomeMessage,
     m_fnHandlerOnGetCurrentDirectory,
     m_fnHandlerOnProvideCommands,
     m_fnHandlerOnCommitCommand,
-    terminal);
+    m_fnOnHandlerExit,
+    terminal));
 }
-
-void libESRI::EsriHandlerFactory::DeleteHandler(libESRI::EsriHandler * handler)
-{
-  if (m_fnOnHandlerExit)
-    m_fnOnHandlerExit(handler);
-  delete handler;
-}
-
 

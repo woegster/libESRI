@@ -15,9 +15,9 @@ namespace libESRI
     virtual ~EsriInstance();
   private:
     void AcceptThread_Routine();
-    void ClientThread_Routine(toni::TcpClient* tcpClient);
+    void ClientThread_Routine(std::unique_ptr<toni::TcpClient>&& tcpClient);
   private:
-    EsriHandlerFactory* m_HandlerFactory = nullptr;
+    std::unique_ptr<EsriHandlerFactory> m_HandlerFactory;
     toni::TcpServer m_TcpServer;
     std::unique_ptr<std::thread> m_NetworkAcceptThread;
   };

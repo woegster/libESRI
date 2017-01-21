@@ -11,7 +11,7 @@ namespace libESRI
   class EsriInternalCommands
   {
   public:
-    EsriInternalCommands(EsriHandler* const realHandler);
+    EsriInternalCommands(EsriHandler& realHandler);
     bool ExecuteInternalCommand(const std::string& command);
     const std::string& ProvideInternalCommands();
   private:
@@ -22,6 +22,6 @@ namespace libESRI
   private:
     std::map<std::string, std::function<std::string()>> m_internalFunctionMap;
     std::string m_InternalCommandsAsString;
-    EsriHandler * const m_realHandler;
+    EsriHandler& m_realHandler;
   };
 }

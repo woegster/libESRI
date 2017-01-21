@@ -8,7 +8,7 @@
 
 namespace libESRI
 {
-  EsriInternalCommands::EsriInternalCommands(EsriHandler* const realHandler)
+  EsriInternalCommands::EsriInternalCommands(EsriHandler& realHandler)
     : m_realHandler(realHandler)
   {
     BuildCommandTable();
@@ -27,7 +27,7 @@ namespace libESRI
     if (functionToExecute != m_internalFunctionMap.end())
     {
       std::string functionResult = functionToExecute->second();
-      m_realHandler->SendToTerminal(functionResult.c_str());
+      m_realHandler.SendToTerminal(functionResult.c_str());
       Prompt();
       return true;
     }
@@ -40,9 +40,9 @@ namespace libESRI
   }
   void EsriInternalCommands::Prompt()
   {
-    std::string curDir = m_realHandler->OnGetCurrentDirectory();
+    std::string curDir = m_realHandler.OnGetCurrentDirectory();
     curDir += ">";
-    m_realHandler->SendToTerminal(curDir.c_str());
+    m_realHandler.SendToTerminal(curDir.c_str());
   }
 
   void EsriInternalCommands::BuildCommandTable()

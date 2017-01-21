@@ -6,14 +6,14 @@
 #include "TcpClient.h"
 #include "SocketEndpointConverter.h"
 #include "SetThreadName.h"
-
+#include "EsriInternalCommands.h"
+#include "EsriHandler.h"
 
 namespace libESRI
 {
   void EsriInstance::SetAndTakeOwnershipOfHandlerFactory(EsriHandlerFactory* newHandlerFactory)
   {
-    delete m_HandlerFactory;
-    m_HandlerFactory = newHandlerFactory;
+    m_HandlerFactory.reset(newHandlerFactory);
   }
 
   bool EsriInstance::Start(unsigned short port, int maxConnections)
@@ -35,9 +35,6 @@ namespace libESRI
 
   EsriInstance::~EsriInstance()
   {
-    delete m_HandlerFactory;
-    m_HandlerFactory = nullptr;
-
     if (m_NetworkAcceptThread && m_NetworkAcceptThread->joinable())
       m_NetworkAcceptThread->join();
   }
@@ -46,26 +43,23 @@ namespace libESRI
   {
     SetThreadNameOfCurrentThread("ESRI: AcceptThread");
 
-    toni::TcpClient* newClient = nullptr;
+    std::unique_ptr<toni::TcpClient> newClient = nullptr;
     while ((newClient = m_TcpServer.Accept()) != nullptr)
     {
-      std::thread clientThread(&EsriInstance::ClientThread_Routine, this, newClient);
+      std::thread clientThread(&EsriInstance::ClientThread_Routine, this, std::move(newClient));
       clientThread.detach();
     }
   }   
 
-  void EsriInstance::ClientThread_Routine(toni::TcpClient* tcpClient)
+  void EsriInstance::ClientThread_Routine(std::unique_ptr<toni::TcpClient>&& tcpClient)
   {
     std::string threadName = "ESRI: " + IPv4WithPortFromSocketEndpoint(tcpClient->GetEndpoint());
     SetThreadNameOfCurrentThread(threadName.c_str());
 
-    EsriTerminal terminalForClient(tcpClient);
-    auto* handlerForThisClient = m_HandlerFactory->CreateNewHandler(&terminalForClient);
+    EsriTerminal terminalForClient(*tcpClient);
+    auto handlerForThisClient(m_HandlerFactory->CreateNewHandler(terminalForClient));
 
-    EsriClientThread clientThread(tcpClient, handlerForThisClient);
-    clientThread.EntryPoint();   
-    
-    m_HandlerFactory->DeleteHandler(handlerForThisClient);
-    delete tcpClient;
+    EsriClientThread clientThread(*tcpClient, *handlerForThisClient);
+    clientThread.EntryPoint();
   }
 }

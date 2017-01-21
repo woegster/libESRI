@@ -8,32 +8,25 @@
 
 namespace libESRI
 {
-  EsriClientThread::EsriClientThread(toni::TcpClient* tcpClient, EsriHandler* handler)
+  EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandler& handler)
     : m_tcpClient(tcpClient)
     , m_handler(handler)
-    , m_TelnetLib(nullptr)
+    , m_TelnetLib(nullptr, [](telnet_t* toBeDeleted)
+                           {
+                             //telnet_free has no nullptr check, but its inside unique_ptr
+                             telnet_free(toBeDeleted);
+                           })
   {
-    m_InternalHandler = new EsriInternalCommands(handler);
-  }
-
-  EsriClientThread::~EsriClientThread()
-  {
-    if (m_TelnetLib)
-    {
-      telnet_free(m_TelnetLib);
-      m_TelnetLib = nullptr;
-    }
-
-    delete m_InternalHandler;
+    m_InternalHandler.reset(new EsriInternalCommands(handler));
   }
 
   bool EsriClientThread::SendWelcomeMessage()
   {
-    char const * const welcomeMessage = m_handler->OnProvideWelcomeMessage();
+    char const * const welcomeMessage = m_handler.OnProvideWelcomeMessage();
     if (welcomeMessage)
     {
       size_t welcomeMessageLength = strlen(welcomeMessage);
-      telnet_send(m_TelnetLib, welcomeMessage, welcomeMessageLength);
+      telnet_send(m_TelnetLib.get(), welcomeMessage, welcomeMessageLength);
     }
 
     return true;    
@@ -41,12 +34,12 @@ namespace libESRI
 
   bool EsriClientThread::SendCurrentDirectory()
   {
-    char const * const curDir = m_handler->OnGetCurrentDirectory();
+    char const * const curDir = m_handler.OnGetCurrentDirectory();
     if (curDir)
     {
       std::string currentDirectory = curDir;
       currentDirectory += ">";
-      return m_tcpClient->Send(currentDirectory.c_str(), (int)currentDirectory.length()) > 0;
+      return m_tcpClient.Send(currentDirectory.c_str(), (int)currentDirectory.length()) > 0;
     }
 
     return true;
@@ -54,7 +47,7 @@ namespace libESRI
 
   void EsriClientThread::AutoComplete(std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates)
   {
-    auto* allCommandsAsString = m_handler->OnProvideCommands();
+    auto* allCommandsAsString = m_handler.OnProvideCommands();
     if (!allCommandsAsString)
     {
       commonStartOfAllCandidates = input;
@@ -115,20 +108,20 @@ namespace libESRI
 
       input = autoCompletedInput;
 
-      allCandidates += m_handler->OnGetCurrentDirectory();
+      allCandidates += m_handler.OnGetCurrentDirectory();
       allCandidates += ">";
       allCandidates += input;
-      return m_tcpClient->Send(allCandidates.c_str(), (int)allCandidates.length()) > 0;
+      return m_tcpClient.Send(allCandidates.c_str(), (int)allCandidates.length()) > 0;
     }
     else
     {
       input = autoCompletedInput;
 
       std::string autoCompletedInputWithPrompt = "\r";
-      autoCompletedInputWithPrompt += m_handler->OnGetCurrentDirectory();
+      autoCompletedInputWithPrompt += m_handler.OnGetCurrentDirectory();
       autoCompletedInputWithPrompt += ">";
       autoCompletedInputWithPrompt += input;
-      return m_tcpClient->Send(autoCompletedInputWithPrompt.c_str(), (int)autoCompletedInputWithPrompt.length()) > 0;
+      return m_tcpClient.Send(autoCompletedInputWithPrompt.c_str(), (int)autoCompletedInputWithPrompt.length()) > 0;
     }
   }
 
@@ -141,7 +134,7 @@ namespace libESRI
         memcpy(m_recvBufferAfterTelnet.data(), ev->data.buffer, ev->data.size);
         break;
       case TELNET_EV_SEND:
-        m_tcpClient->Send(ev->data.buffer, ev->data.size);
+        m_tcpClient.Send(ev->data.buffer, ev->data.size);
         break;
     }
   }
@@ -150,9 +143,9 @@ namespace libESRI
   {
     std::vector<char> rawNetworkData;
     rawNetworkData.resize(bytesToRead);
-    m_tcpClient->Recv(rawNetworkData.data(), bytesToRead);
+    m_tcpClient.Recv(rawNetworkData.data(), bytesToRead);
 
-    telnet_recv(m_TelnetLib, rawNetworkData.data(), rawNetworkData.size());
+    telnet_recv(m_TelnetLib.get(), rawNetworkData.data(), rawNetworkData.size());
 
     memcpy(targetBuffer, m_recvBufferAfterTelnet.data(), m_recvBufferAfterTelnet.size());
     m_recvBufferAfterTelnet.clear();
@@ -163,7 +156,7 @@ namespace libESRI
   int EsriClientThread::OnShellWantsToWrite(const char* sourceData, int sourceDataSize)
   {
     //OutputDebugStringA(sourceData);
-    telnet_send(m_TelnetLib, sourceData, sourceDataSize);
+    telnet_send(m_TelnetLib.get(), sourceData, sourceDataSize);
     return sourceDataSize;
   }
 
@@ -187,7 +180,7 @@ namespace libESRI
       { -1, 0, 0 }
     };
 
-    m_TelnetLib = telnet_init(telopts, TelnetEvent_proxy, 0, this);
+    m_TelnetLib.reset(telnet_init(telopts, TelnetEvent_proxy, 0, this));
 
     auto shell_read_proxy = [](char* buffer, int count, void* userData) -> int
     {
@@ -218,9 +211,9 @@ namespace libESRI
 
     int recvVal = 0;
     std::vector<char> receiveBuffer(1024);
-    while ((recvVal = m_tcpClient->Recv(&receiveBuffer[0], (int)receiveBuffer.size())) > 0)
+    while ((recvVal = m_tcpClient.Recv(&receiveBuffer[0], (int)receiveBuffer.size())) > 0)
     {
-      telnet_recv(m_TelnetLib, receiveBuffer.data(), receiveBuffer.size());
+      telnet_recv(m_TelnetLib.get(), receiveBuffer.data(), receiveBuffer.size());
       memset(receiveBuffer.data(), 0, receiveBuffer.size());
     }
   }

@@ -9,8 +9,7 @@ namespace libESRI
   class EsriHandlerFactory
   {
   public:
-    EsriHandler* CreateNewHandler(EsriTerminal * terminal);
-    void DeleteHandler(EsriHandler * handler);
+    std::unique_ptr<EsriHandler> CreateNewHandler(EsriTerminal& terminal);
   public:
     EsriHandlerFactory(
       fnHandlerOnProvideWelcomeMessage,

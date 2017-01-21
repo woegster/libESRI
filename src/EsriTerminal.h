@@ -10,9 +10,9 @@ namespace libESRI
   class EsriTerminal
   {
   public:
-    EsriTerminal(toni::TcpClient* tcpClient);
+    EsriTerminal(toni::TcpClient& tcpClient);
     bool EsriSendToTerminal(char const * const text, size_t textLen);
   private:
-    toni::TcpClient* m_tcpClient;
+    toni::TcpClient& m_tcpClient;
   };
 }

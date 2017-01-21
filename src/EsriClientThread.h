@@ -12,8 +12,7 @@ namespace libESRI
   class EsriClientThread
   {
   public:
-    EsriClientThread(toni::TcpClient* tcpClient, EsriHandler* handler);
-    ~EsriClientThread();
+    EsriClientThread(toni::TcpClient& tcpClient, EsriHandler& handler);
     void EntryPoint();
   private:
     bool SendWelcomeMessage();
@@ -27,10 +26,10 @@ namespace libESRI
   private:
     std::vector<char> m_recvBufferAfterTelnet;
     ntshell_t m_nthshell;
-    telnet_t* m_TelnetLib;
-    toni::TcpClient* m_tcpClient;
-    EsriHandler* m_handler;
-    EsriInternalCommands* m_InternalHandler;
+    toni::TcpClient& m_tcpClient;
+    EsriHandler& m_handler;
+    std::unique_ptr<telnet_t, decltype(&telnet_free)> m_TelnetLib;
+    std::unique_ptr<EsriInternalCommands> m_InternalHandler;
   };
 }
 
