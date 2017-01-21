@@ -40,6 +40,14 @@ namespace toni
     return false;
   }
 
+  void TcpServer::ShutdownListenSocket()
+  {
+    if (m_listenSocket != INVALID_SOCKET)
+    {
+      shutdown(m_listenSocket, SD_BOTH);
+    }
+  }
+
   std::unique_ptr<TcpClient> TcpServer::Accept()
   {
     if (m_listenSocket != INVALID_SOCKET)

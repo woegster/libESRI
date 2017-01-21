@@ -35,6 +35,7 @@ namespace libESRI
 
   EsriInstance::~EsriInstance()
   {
+    m_TcpServer.ShutdownListenSocket();
     if (m_NetworkAcceptThread && m_NetworkAcceptThread->joinable())
       m_NetworkAcceptThread->join();
   }

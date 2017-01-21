@@ -10,7 +10,8 @@ using sockaddrLenType = int;
 #define closesocket close
 using sockaddrLenType = unsigned int;
 #define SOCKET int
-#define INVALID_SOCKET 0
+#define SD_BOTH SHUT_RDWR
+#define INVALID_SOCKET -1
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>

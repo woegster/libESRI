@@ -12,6 +12,7 @@ namespace toni
     ~TcpServer();
     bool Start(const SocketEndpoint& localEndpoint, int Backlog);
     std::unique_ptr<TcpClient> Accept();
+    void ShutdownListenSocket();
   private:
     void CleanUp();
   private:
