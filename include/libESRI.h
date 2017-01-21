@@ -1,6 +1,6 @@
 #pragma once
 /*
-libESRI - A telnet framework library for applications
+libESRI - A telnet framework for applications
 */
 
 
