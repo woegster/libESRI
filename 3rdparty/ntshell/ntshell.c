@@ -228,6 +228,7 @@ static void actfunc_enter(ntshell_t *ntshell, vtrecv_action_t action, unsigned c
     text_history_write(GET_HISTORY(ntshell), txt);
     PROMPT_NEWLINE(ntshell);
     CALLBACK(ntshell, txt);
+    PROMPT_NEWLINE(ntshell);
     PROMPT_WRITE(ntshell);
 }
 
@@ -626,6 +627,7 @@ void ntshell_execute(ntshell_t *p)
     /*
      * User input loop.
      */
+    PROMPT_NEWLINE(p);
     PROMPT_WRITE(p);
 
     unsigned char ch = '\0';

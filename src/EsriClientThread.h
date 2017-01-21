@@ -1,17 +1,19 @@
 #pragma once
 #include "TcpClient.h"
 #include "TelnetConnection.h"
+#include "EsriTerminal.h"
 #include <memory>
 
 namespace libESRI
 {
+  class EsriHandlerFactory;
   class EsriHandler;
   class EsriInternalCommands;
 
   class EsriClientThread
   {
   public:
-    EsriClientThread(toni::TcpClient& tcpClient, EsriHandler& handler);
+    EsriClientThread(toni::TcpClient& tcpClient, EsriHandlerFactory& handlerFactory);
     void EntryPoint();
   private:
     bool SendWelcomeMessage();
@@ -24,9 +26,10 @@ namespace libESRI
   private:
     static bool isControlCodeToDisconnect(const char controlCode);
   private:
-    EsriHandler& m_handler;
     std::unique_ptr<EsriInternalCommands> m_InternalHandler;
+    std::unique_ptr<EsriHandler> m_handler;
     TelnetConnection m_Telnet;
+    EsriTerminal m_Terminal;
   };
 }
 

@@ -63,11 +63,8 @@ namespace libESRI
   {
     std::string threadName = "esri" + IPv4FromSocketEndpoint(tcpClient->GetEndpoint());
     SetThreadNameOfCurrentThread(threadName.c_str());
-
-    EsriTerminal terminalForClient(*tcpClient);
-    auto handlerForThisClient(m_HandlerFactory->CreateNewHandler(terminalForClient));
-
-    EsriClientThread clientThread(*tcpClient, *handlerForThisClient);
+    
+    EsriClientThread clientThread(*tcpClient, *m_HandlerFactory);
     clientThread.EntryPoint();
     tcpClient->Disconnect();
   }

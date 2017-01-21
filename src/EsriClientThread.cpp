@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EsriClientThread.h"
 #include "EsriHandler.h"
+#include "EsriHandlerFactory.h"
 #include "EsriInternalCommands.h"
 #include "strOps.h"
 #include <algorithm>
@@ -9,11 +10,12 @@
 
 namespace libESRI
 {
-  EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandler& handler)
-    : m_handler(handler)
-    , m_Telnet(tcpClient)
+  EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandlerFactory& handlerFactory)
+    : m_Telnet(tcpClient) //holy fuck
+    , m_Terminal(m_Telnet)//holy fuck
   {
-    m_InternalHandler.reset(new EsriInternalCommands(handler));
+    m_handler = handlerFactory.CreateNewHandler(m_Terminal);
+    m_InternalHandler.reset(new EsriInternalCommands(*m_handler));
   }
 
   bool EsriClientThread::isControlCodeToDisconnect(const char controlCode)
@@ -31,7 +33,7 @@ namespace libESRI
 
   bool EsriClientThread::SendWelcomeMessage()
   {
-    char const * const welcomeMessage = m_handler.OnProvideWelcomeMessage();
+    char const * const welcomeMessage = m_handler->OnProvideWelcomeMessage();
     if (welcomeMessage)
     {
       m_Telnet.WriteText(welcomeMessage, strlen(welcomeMessage));
@@ -47,7 +49,7 @@ namespace libESRI
 
   void EsriClientThread::AutoComplete(std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates)
   {
-    auto* allCommandsAsString = m_handler.OnProvideCommands();
+    auto* allCommandsAsString = m_handler->OnProvideCommands();
     if (!allCommandsAsString)
     {
       commonStartOfAllCandidates = input;
@@ -108,7 +110,7 @@ namespace libESRI
 
       input = autoCompletedInput;
 
-      allCandidates += m_handler.OnGetCurrentDirectory();
+      allCandidates += m_handler->OnGetCurrentDirectory();
       allCandidates += ">";
       allCandidates += input;
       //return m_tcpClient.Send(allCandidates.c_str(), (int)allCandidates.length()) > 0;
@@ -118,7 +120,7 @@ namespace libESRI
       input = autoCompletedInput;
 
       std::string autoCompletedInputWithPrompt = "\r";
-      autoCompletedInputWithPrompt += m_handler.OnGetCurrentDirectory();
+      autoCompletedInputWithPrompt += m_handler->OnGetCurrentDirectory();
       autoCompletedInputWithPrompt += ">";
       autoCompletedInputWithPrompt += input;
       //return m_tcpClient.Send(autoCompletedInputWithPrompt.c_str(), (int)autoCompletedInputWithPrompt.length()) > 0;
@@ -169,7 +171,7 @@ namespace libESRI
 
   int EsriClientThread::OnShellCallback(const char* textFromTerminal)
   {
-    //OutputDebugStringA(textFromTerminal);
+    m_handler->OnCommitCommand(textFromTerminal);
     return 0;
   }
   
@@ -192,7 +194,7 @@ namespace libESRI
 
     ntshell_t terminalEmulation;
     ntshell_init(&terminalEmulation, shell_read_proxy, shell_write_proxy, shell_callback_proxy, this);
-    char const * const directory = m_handler.OnGetCurrentDirectory();
+    char const * const directory = m_handler->OnGetCurrentDirectory();
     if (directory)
     {
       ntshell_set_prompt(&terminalEmulation, directory);

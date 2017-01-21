@@ -23,7 +23,6 @@ public:
   {
     char const response[] = "response";
     EsriSendToTerminal(terminal, response, sizeof(response));
-    EsriPromptTerminal(client, terminal);
   }
 
   static void onDisconnect(void* client, void* userData)

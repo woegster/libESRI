@@ -1,17 +1,18 @@
 #include "stdafx.h"
 #include "EsriTerminal.h"
-#include "TcpClient.h"
+#include "TelnetConnection.h"
 
 namespace libESRI
 {
-  EsriTerminal::EsriTerminal(toni::TcpClient& tcpClient)
-    : m_tcpClient(tcpClient)
+  EsriTerminal::EsriTerminal(libESRI::TelnetConnection& telnetConnection)
+    : m_TelnetConnection(telnetConnection)
   {
 
   }
 
   bool EsriTerminal::EsriSendToTerminal(char const * const text, size_t textLen)
   {
-    return m_tcpClient.Send(text, (int)textLen) > 0;
+    m_TelnetConnection.WriteText(text, textLen);
+    return m_TelnetConnection.hasNetworkError() == false;
   }
 }
