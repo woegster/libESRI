@@ -42,6 +42,7 @@ SET(SOURCES
   src/SocketEndpointConverter.cpp
   src/TcpClient.cpp
   src/TcpServer.cpp
+  src/TelnetConnection.cpp
 )
 
 if ( WIN32 )
