@@ -42,10 +42,16 @@ namespace toni
 
   void TcpServer::ShutdownListenSocket()
   {
+  #ifdef _WINDOWS
+    //calls closesocket - shutdown wont work
+    CleanUp();
+  #else
+    //call shutdown, closesocket wont work
     if (m_listenSocket != INVALID_SOCKET)
     {
       shutdown(m_listenSocket, SD_BOTH);
     }
+  #endif    
   }
 
   void TcpServer::ShutdownAllClients()
@@ -90,6 +96,9 @@ namespace toni
 
   void TcpServer::CleanUp()
   {
+  #ifndef _WINDOWS
+    std::lock_guard<std::mutex> lck(m_closeMutex);
+  #endif
     if (m_listenSocket != INVALID_SOCKET)
     {
       closesocket(m_listenSocket);

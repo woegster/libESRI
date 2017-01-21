@@ -19,11 +19,12 @@ void* EsriCreateInstance()
 }
 void EsriDeleteInstance(void* instance)
 {
+  libESRI::EsriInstance* typedInstance = static_cast<libESRI::EsriInstance*>(instance);
+  delete typedInstance;
+
 #ifdef _WINDOWS
   WSACleanup();
 #endif
-  libESRI::EsriInstance* typedInstance = static_cast<libESRI::EsriInstance*>(instance);
-  delete typedInstance;
 }
 
 void EsriSetHandlersForInstance(
