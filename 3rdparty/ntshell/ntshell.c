@@ -627,9 +627,10 @@ void ntshell_execute(ntshell_t *p)
      * User input loop.
      */
     PROMPT_WRITE(p);
-    while (1) {
-        unsigned char ch;
-        SERIAL_READ(p, (char *)&ch, sizeof(ch));
+
+    unsigned char ch = '\0';
+    while (SERIAL_READ(p, (char *)&ch, sizeof(ch)) != -1)
+    {
         vtrecv_execute(&(p->vtrecv), &ch, sizeof(ch));
     }
 }

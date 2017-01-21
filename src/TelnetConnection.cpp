@@ -10,6 +10,7 @@ libESRI::TelnetConnection::TelnetConnection(toni::TcpClient& tcpConnection)
                             })
   , m_DataByte('\0')
   , m_hasReadDataByte(false)
+  , m_hasNetworkError(false)
 {
   static const telnet_telopt_t telopts[] = {
     { TELNET_TELOPT_ECHO,	TELNET_WILL, TELNET_DONT },
@@ -41,6 +42,7 @@ char libESRI::TelnetConnection::ReadChar()
     }
     else
     {
+      OnNetworkError();
       return '\0';
     }
   }
@@ -65,7 +67,20 @@ void libESRI::TelnetConnection::OnTelnetEvent(telnet_event_t& ev)
       m_hasReadDataByte = true;
       break;
     case TELNET_EV_SEND:
-      m_TcpConnection.Send(ev.data.buffer, ev.data.size);
+      if (m_TcpConnection.Send(ev.data.buffer, ev.data.size) <= 0)
+      {
+        OnNetworkError();
+      }
       break;
   }
+}
+
+void libESRI::TelnetConnection::OnNetworkError()
+{
+  m_hasNetworkError = true;
+}
+
+bool libESRI::TelnetConnection::hasNetworkError() const
+{
+  return m_hasNetworkError;
 }

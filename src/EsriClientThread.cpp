@@ -109,6 +109,9 @@ namespace libESRI
 
   int EsriClientThread::OnShellRequiresRead(char* targetBuffer, int bytesToRead)
   {
+    if (m_Telnet.hasNetworkError())
+      return -1;
+
     //mostly the case: terminal request one char
     if (bytesToRead == 1)
     {
@@ -133,6 +136,9 @@ namespace libESRI
 
   int EsriClientThread::OnShellWantsToWrite(const char* sourceData, int sourceDataSize)
   {
+    if (m_Telnet.hasNetworkError())
+      return -1;
+
     m_Telnet.WriteText(sourceData, sourceDataSize);
     return sourceDataSize;
   }
