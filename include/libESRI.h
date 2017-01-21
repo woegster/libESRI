@@ -20,17 +20,17 @@ libESRI - A telnet framework library for applications
   #define ESRIAPI
 #endif
 
-typedef char const * const (ESRIAPI*fnHandlerOnProvideWelcomeMessage)(void* handler);
-typedef char const * const (ESRIAPI*fnHandlerOnGetCurrentDirectory)(void* handler);
-typedef char const * const (ESRIAPI*fnHandlerOnProvideCommands)(void* handler);
-typedef void               (ESRIAPI*fnHandlerOnCommitCommand)(void* handler, void* terminal, const char * const command);
-typedef void               (ESRIAPI*fnHandlerOnExit)(void* handler);
+typedef char const * const (ESRIAPI*fnHandlerOnProvideWelcomeMessage)(void* handler, void* userData);
+typedef char const * const (ESRIAPI*fnHandlerOnGetCurrentDirectory)(void* handler, void* userData);
+typedef char const * const (ESRIAPI*fnHandlerOnProvideCommands)(void* handler, void* userData);
+typedef void               (ESRIAPI*fnHandlerOnCommitCommand)(void* handler, void* terminal, const char * const command, void* userData);
+typedef void               (ESRIAPI*fnHandlerOnExit)(void* handler, void* userData);
 
 extern "C"
 {
   ESRIEXPORT void* ESRIAPI EsriCreateInstance();
   ESRIEXPORT void ESRIAPI EsriDeleteInstance(void* instance);
-  ESRIEXPORT void ESRIAPI EsriSetHandlersForInstance(void* instance, fnHandlerOnProvideWelcomeMessage, fnHandlerOnGetCurrentDirectory, fnHandlerOnProvideCommands, fnHandlerOnCommitCommand, fnHandlerOnExit);
+  ESRIEXPORT void ESRIAPI EsriSetHandlersForInstance(void* instance, void* userData, fnHandlerOnProvideWelcomeMessage, fnHandlerOnGetCurrentDirectory, fnHandlerOnProvideCommands, fnHandlerOnCommitCommand, fnHandlerOnExit);
   ESRIEXPORT int ESRIAPI EsriStartInstance(void* instance, unsigned short port, int maxConnections);
   ESRIEXPORT int ESRIAPI EsriSendToTerminal(void* terminal, char const * const message, int messageLength);
   ESRIEXPORT int ESRIAPI EsriPromptTerminal(void* handler, void* terminal);

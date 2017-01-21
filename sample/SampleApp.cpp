@@ -4,29 +4,29 @@
 class EsriHandlers
 {
 public:
-  static char const * const onWelcomeMessage(void* client)
+  static char const * const onWelcomeMessage(void* client, void* userData)
   {
     return "Welcome to ESRI interface of my App";
   }
 
-  static char const * const getCurrentDirectory(void* client)
+  static char const * const getCurrentDirectory(void* client, void* userData)
   {
     return "main";
   }
 
-  static char const * const provideCommands(void* client)
+  static char const * const provideCommands(void* client, void* userData)
   {
     return "create;close;open;";
   }
 
-  static void onCommand(void* client, void* terminal, const char * const command)
+  static void onCommand(void* client, void* terminal, const char * const command, void* userData)
   {
     char const response[] = "response";
     EsriSendToTerminal(terminal, response, sizeof(response));
     EsriPromptTerminal(client, terminal);
   }
 
-  static void onDisconnect(void* client)
+  static void onDisconnect(void* client, void* userData)
   {
 
   }
@@ -36,6 +36,7 @@ int main()
 {
   void* esriInstance = EsriCreateInstance();
   EsriSetHandlersForInstance(esriInstance,
+                             nullptr,
                              &EsriHandlers::onWelcomeMessage,
                              &EsriHandlers::getCurrentDirectory,
                              &EsriHandlers::provideCommands,

@@ -7,12 +7,14 @@ libESRI::EsriHandlerFactory::EsriHandlerFactory(
   fnHandlerOnGetCurrentDirectory onGetCurrentDirectory,
   fnHandlerOnProvideCommands onProvideCommands,
   fnHandlerOnCommitCommand onCommitCommand,
-  fnHandlerOnExit onExit)
+  fnHandlerOnExit onExit,
+  void* userData)
   : m_fnHandlerOnProvideWelcomeMessage(onProvideWelcomeMessage)
   , m_fnHandlerOnGetCurrentDirectory(onGetCurrentDirectory)
   , m_fnHandlerOnProvideCommands(onProvideCommands)
   , m_fnHandlerOnCommitCommand(onCommitCommand)
   , m_fnOnHandlerExit(onExit)
+  , m_userData(userData)
 {
 
 }
@@ -25,6 +27,6 @@ std::unique_ptr<libESRI::EsriHandler> libESRI::EsriHandlerFactory::CreateNewHand
     m_fnHandlerOnProvideCommands,
     m_fnHandlerOnCommitCommand,
     m_fnOnHandlerExit,
-    terminal));
+    terminal, m_userData));
 }
 

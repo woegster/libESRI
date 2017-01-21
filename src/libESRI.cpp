@@ -28,13 +28,14 @@ void EsriDeleteInstance(void* instance)
 
 void EsriSetHandlersForInstance(
   void* instance,
+  void* userData,
   fnHandlerOnProvideWelcomeMessage onProvideWelcomeMessage,
   fnHandlerOnGetCurrentDirectory onGetCurrentDirectory,
   fnHandlerOnProvideCommands onProvideCommands,
   fnHandlerOnCommitCommand onCommitCommand,
   fnHandlerOnExit onExit)
 {
-  auto* capiHandlerFactory = new libESRI::EsriHandlerFactory(onProvideWelcomeMessage, onGetCurrentDirectory, onProvideCommands, onCommitCommand, onExit);
+  auto* capiHandlerFactory = new libESRI::EsriHandlerFactory(onProvideWelcomeMessage, onGetCurrentDirectory, onProvideCommands, onCommitCommand, onExit, userData);
   auto typedInstance = (libESRI::EsriInstance*)instance;
   typedInstance->SetAndTakeOwnershipOfHandlerFactory(capiHandlerFactory);
 }

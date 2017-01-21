@@ -14,7 +14,8 @@ namespace libESRI
       fnHandlerOnProvideCommands,
       fnHandlerOnCommitCommand,
       fnHandlerOnExit,
-      libESRI::EsriTerminal&);
+      libESRI::EsriTerminal&,
+      void* userData);
     ~EsriHandler();
 
     char const * const OnProvideWelcomeMessage();
@@ -30,5 +31,6 @@ namespace libESRI
     fnHandlerOnCommitCommand m_fnHandlerOnCommitCommand;
     fnHandlerOnExit m_fnHandlerOnExit;
     libESRI::EsriTerminal& m_Terminal;
+    void* m_userData;
   };
 }

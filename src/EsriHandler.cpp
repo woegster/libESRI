@@ -8,13 +8,15 @@ libESRI::EsriHandler::EsriHandler(
   fnHandlerOnProvideCommands onProvideCommands,
   fnHandlerOnCommitCommand onCommitCommand,
   fnHandlerOnExit onExit,
-  libESRI::EsriTerminal& terminal)
+  libESRI::EsriTerminal& terminal,
+  void* userData)
   : m_fnHandlerOnProvideWelcomeMessage(onProvideWelcomeMessage)
   , m_fnHandlerOnGetCurrentDirectory(onGetCurrentDirectory)
   , m_fnHandlerOnProvideCommands(onProvideCommands)
   , m_fnHandlerOnCommitCommand(onCommitCommand)
   , m_fnHandlerOnExit(onExit)
   , m_Terminal(terminal)
+  , m_userData(userData)
 {
 
 }
@@ -23,7 +25,7 @@ libESRI::EsriHandler::~EsriHandler()
 {
   if (m_fnHandlerOnExit)
   {
-    m_fnHandlerOnExit(this);
+    m_fnHandlerOnExit(this, m_userData);
   }
 }
 
@@ -31,7 +33,7 @@ char const * const libESRI::EsriHandler::OnProvideWelcomeMessage()
 {
   if (m_fnHandlerOnProvideWelcomeMessage)
   {
-    return m_fnHandlerOnProvideWelcomeMessage(this);
+    return m_fnHandlerOnProvideWelcomeMessage(this, m_userData);
   }
   return nullptr;
 }
@@ -40,7 +42,7 @@ char const * const libESRI::EsriHandler::OnGetCurrentDirectory()
 {
   if (m_fnHandlerOnGetCurrentDirectory)
   {
-    return m_fnHandlerOnGetCurrentDirectory(this);
+    return m_fnHandlerOnGetCurrentDirectory(this, m_userData);
   }
   return nullptr;
 }
@@ -49,7 +51,7 @@ char const * const libESRI::EsriHandler::OnProvideCommands()
 {
   if (m_fnHandlerOnProvideCommands)
   {
-    return m_fnHandlerOnProvideCommands(this);
+    return m_fnHandlerOnProvideCommands(this, m_userData);
   }
   return nullptr;
 }
@@ -58,7 +60,7 @@ void libESRI::EsriHandler::OnCommitCommand(const char * const command)
 {
   if (m_fnHandlerOnCommitCommand)
   {
-    m_fnHandlerOnCommitCommand(this, &m_Terminal, command);
+    m_fnHandlerOnCommitCommand(this, &m_Terminal, command, m_userData);
   }
 }
 
