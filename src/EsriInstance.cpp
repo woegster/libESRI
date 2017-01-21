@@ -36,23 +36,30 @@ namespace libESRI
   EsriInstance::~EsriInstance()
   {
     m_TcpServer.ShutdownListenSocket();
+
     if (m_NetworkAcceptThread && m_NetworkAcceptThread->joinable())
       m_NetworkAcceptThread->join();
+
+    m_TcpServer.ShutdownAllClients();
+    for (auto& clientThread : m_clientThreads)
+    {
+      if (clientThread.joinable())
+        clientThread.join();
+    }
   }
 
   void EsriInstance::AcceptThread_Routine()
   {
     SetThreadNameOfCurrentThread("EsriAcptThrd");
 
-    std::unique_ptr<toni::TcpClient> newClient = nullptr;
+    std::shared_ptr<toni::TcpClient> newClient = nullptr;
     while ((newClient = m_TcpServer.Accept()) != nullptr)
     {
-      std::thread clientThread(&EsriInstance::ClientThread_Routine, this, std::move(newClient));
-      clientThread.detach();
+      m_clientThreads.emplace_back(&EsriInstance::ClientThread_Routine, this, newClient);
     }
   }   
 
-  void EsriInstance::ClientThread_Routine(std::unique_ptr<toni::TcpClient>&& tcpClient)
+  void EsriInstance::ClientThread_Routine(std::shared_ptr<toni::TcpClient> tcpClient)
   {
     std::string threadName = "esri" + IPv4FromSocketEndpoint(tcpClient->GetEndpoint());
     SetThreadNameOfCurrentThread(threadName.c_str());
@@ -62,5 +69,6 @@ namespace libESRI
 
     EsriClientThread clientThread(*tcpClient, *handlerForThisClient);
     clientThread.EntryPoint();
+    tcpClient->Disconnect();
   }
 }

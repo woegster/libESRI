@@ -11,6 +11,7 @@ using sockaddrLenType = int;
 using sockaddrLenType = unsigned int;
 #define SOCKET int
 #define SD_BOTH SHUT_RDWR
+#define SD_RECEIVE SHUT_WR
 #define INVALID_SOCKET -1
 #include <sys/socket.h>
 #include <netinet/in.h>

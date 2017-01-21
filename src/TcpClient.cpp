@@ -65,10 +65,20 @@ namespace toni
 
   void TcpClient::Disconnect()
   {
+    //may be called explicitly for closing or implicitly on destruction through other shared_ptr
+    std::lock_guard<std::mutex> lck(m_closeMutex);
     if (m_connectedSocket != INVALID_SOCKET)
     {
       closesocket(m_connectedSocket);
       m_connectedSocket = INVALID_SOCKET;
+    }
+  }
+
+  void TcpClient::Shutdown()
+  {
+    if (m_connectedSocket != INVALID_SOCKET)
+    {
+      shutdown(m_connectedSocket, SD_BOTH);
     }
   }
 

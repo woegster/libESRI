@@ -48,7 +48,17 @@ namespace toni
     }
   }
 
-  std::unique_ptr<TcpClient> TcpServer::Accept()
+  void TcpServer::ShutdownAllClients()
+  {
+    for (auto& client : m_clients)
+    {
+      client->Shutdown();
+    }
+
+    m_clients.clear();
+  }
+
+  std::shared_ptr<TcpClient> TcpServer::Accept()
   {
     if (m_listenSocket != INVALID_SOCKET)
     {
@@ -69,7 +79,9 @@ namespace toni
           break;
         }
 
-        return std::unique_ptr<TcpClient>(new TcpClient(remoteSocket, clientEndpoint));
+        auto newClient = std::make_shared<TcpClient>(remoteSocket, clientEndpoint);
+        m_clients.emplace_back(newClient);
+        return newClient;
       }
     }
 

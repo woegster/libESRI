@@ -1,5 +1,6 @@
 #pragma once
 #include "SocketEndpoint.h"
+#include <mutex>
 
 namespace toni
 {
@@ -14,9 +15,11 @@ namespace toni
     int Send(void const * readableData, int BufferSize);
     const SocketEndpoint& GetEndpoint() const;
     bool ConnectTo(const SocketEndpoint& endpoint);
+    void Shutdown();
     void Disconnect();
   private:
     SOCKET m_connectedSocket = INVALID_SOCKET;
     SocketEndpoint m_remoteAddress;
+    std::mutex m_closeMutex;
   };
 }
