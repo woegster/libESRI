@@ -23,6 +23,7 @@ With this the code you write can always easily be executed.
 * `#include <libESRI.h>`
 * Create an Instance with `EsriCreateInstsance()`
 * Set your callback handlers with `EsriSetHandlersForInstance(...)`
+* Start accepting connections with `EsriStartInstance(esriInstance, port, maxConnections)`
 * Do your code in the `OnCommitCommand(..., sring command, ...)` handler
 * Delete the instance with `EsriDeleteInstance()` when exiting
 
