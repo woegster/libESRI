@@ -1,6 +1,5 @@
 #pragma once
 #include "TcpClient.h"
-#include "ntshell.h"
 #include "TelnetConnection.h"
 #include <memory>
 
@@ -23,11 +22,11 @@ namespace libESRI
     int OnShellWantsToWrite(const char* sourceData, int sourceDataSize);
     int OnShellCallback(const char* textFromTerminal);
   private:
-    ntshell_t m_nthshell;
-    toni::TcpClient& m_tcpClient;
+    static bool isControlCodeToDisconnect(const char controlCode);
+  private:
     EsriHandler& m_handler;
-    TelnetConnection m_Telnet;
     std::unique_ptr<EsriInternalCommands> m_InternalHandler;
+    TelnetConnection m_Telnet;
   };
 }
 

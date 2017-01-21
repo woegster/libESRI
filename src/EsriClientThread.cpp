@@ -5,17 +5,29 @@
 #include "strOps.h"
 #include <algorithm>
 #include <string.h>
-
+#include <ntshell.h>
 
 namespace libESRI
 {
   EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandler& handler)
-    : m_tcpClient(tcpClient)
-    , m_handler(handler)
+    : m_handler(handler)
     , m_Telnet(tcpClient)
   {
     m_InternalHandler.reset(new EsriInternalCommands(handler));
   }
+
+  bool EsriClientThread::isControlCodeToDisconnect(const char controlCode)
+  {
+    switch (controlCode)
+    {
+      case '\x3': //CTRL-C
+      case '\x4': //CTRL-D
+        return true;
+    }
+
+    return false;
+  }
+
 
   bool EsriClientThread::SendWelcomeMessage()
   {
@@ -93,7 +105,7 @@ namespace libESRI
       allCandidates += m_handler.OnGetCurrentDirectory();
       allCandidates += ">";
       allCandidates += input;
-      return m_tcpClient.Send(allCandidates.c_str(), (int)allCandidates.length()) > 0;
+      //return m_tcpClient.Send(allCandidates.c_str(), (int)allCandidates.length()) > 0;
     }
     else
     {
@@ -103,20 +115,22 @@ namespace libESRI
       autoCompletedInputWithPrompt += m_handler.OnGetCurrentDirectory();
       autoCompletedInputWithPrompt += ">";
       autoCompletedInputWithPrompt += input;
-      return m_tcpClient.Send(autoCompletedInputWithPrompt.c_str(), (int)autoCompletedInputWithPrompt.length()) > 0;
+      //return m_tcpClient.Send(autoCompletedInputWithPrompt.c_str(), (int)autoCompletedInputWithPrompt.length()) > 0;
     }
+
+    return false;
   }
 
   int EsriClientThread::OnShellRequiresRead(char* targetBuffer, int bytesToRead)
   {
     if (m_Telnet.hasNetworkError())
-      return -1;
+      return 0;
 
     //mostly the case: terminal request one char
     if (bytesToRead == 1)
     {
       targetBuffer[0] = m_Telnet.ReadChar();
-      return bytesToRead;
+      return isControlCodeToDisconnect(targetBuffer[0]) ? 0 : bytesToRead;
     }
     
     //allocate buffer
@@ -127,6 +141,10 @@ namespace libESRI
     for (int i = 0; i < bytesToRead; i++)
     {
       textBuffer[i] = m_Telnet.ReadChar();
+      if (isControlCodeToDisconnect(textBuffer[i]))
+      {
+        return 0;
+      }
     }
 
     //copy buffer into terminal
@@ -166,9 +184,10 @@ namespace libESRI
       return static_cast<EsriClientThread*>(userData)->OnShellCallback(buffer);
     };
 
-    ntshell_init(&m_nthshell, shell_read_proxy, shell_write_proxy, shell_callback_proxy, this);
-    ntshell_set_prompt(&m_nthshell, "ESRI>");
+    ntshell_t terminalEmulation;
+    ntshell_init(&terminalEmulation, shell_read_proxy, shell_write_proxy, shell_callback_proxy, this);
+    ntshell_set_prompt(&terminalEmulation, "ESRI>");
 
-    ntshell_execute(&m_nthshell);
+    ntshell_execute(&terminalEmulation);
   }
 }
