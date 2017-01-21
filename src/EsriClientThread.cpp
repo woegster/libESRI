@@ -31,6 +31,12 @@ namespace libESRI
 
   bool EsriClientThread::SendWelcomeMessage()
   {
+    char const * const welcomeMessage = m_handler.OnProvideWelcomeMessage();
+    if (welcomeMessage)
+    {
+      m_Telnet.WriteText(welcomeMessage, strlen(welcomeMessage));
+    }
+
     return true;    
   }
 
@@ -186,8 +192,17 @@ namespace libESRI
 
     ntshell_t terminalEmulation;
     ntshell_init(&terminalEmulation, shell_read_proxy, shell_write_proxy, shell_callback_proxy, this);
-    ntshell_set_prompt(&terminalEmulation, "ESRI>");
+    char const * const directory = m_handler.OnGetCurrentDirectory();
+    if (directory)
+    {
+      ntshell_set_prompt(&terminalEmulation, directory);
+    }
+    else
+    {
+      ntshell_set_prompt(&terminalEmulation, "ESRI>");
+    }
 
+    SendWelcomeMessage();    
     ntshell_execute(&terminalEmulation);
   }
 }

@@ -11,7 +11,7 @@ public:
 
   static char const * const getCurrentDirectory(void* client, void* userData)
   {
-    return "main";
+    return "esri@BusinessApp:/core# ";
   }
 
   static char const * const provideCommands(void* client, void* userData)

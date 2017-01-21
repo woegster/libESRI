@@ -42,7 +42,7 @@ namespace libESRI
 
   void EsriInstance::AcceptThread_Routine()
   {
-    SetThreadNameOfCurrentThread("ESRI: AcceptThread");
+    SetThreadNameOfCurrentThread("EsriAcptThrd");
 
     std::unique_ptr<toni::TcpClient> newClient = nullptr;
     while ((newClient = m_TcpServer.Accept()) != nullptr)
@@ -54,7 +54,7 @@ namespace libESRI
 
   void EsriInstance::ClientThread_Routine(std::unique_ptr<toni::TcpClient>&& tcpClient)
   {
-    std::string threadName = "ESRI: " + IPv4WithPortFromSocketEndpoint(tcpClient->GetEndpoint());
+    std::string threadName = "esri" + IPv4FromSocketEndpoint(tcpClient->GetEndpoint());
     SetThreadNameOfCurrentThread(threadName.c_str());
 
     EsriTerminal terminalForClient(*tcpClient);

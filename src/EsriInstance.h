@@ -12,7 +12,7 @@ namespace libESRI
   public:
     bool Start(unsigned short port, int maxConnections);
     void SetAndTakeOwnershipOfHandlerFactory(EsriHandlerFactory* newHandlerFactory);
-    virtual ~EsriInstance();
+    ~EsriInstance();
   private:
     void AcceptThread_Routine();
     void ClientThread_Routine(std::unique_ptr<toni::TcpClient>&& tcpClient);
