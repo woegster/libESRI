@@ -16,7 +16,7 @@ public:
 
   static char const * const provideCommands(void* client, void* userData)
   {
-    return "create;close;open;";
+    return "start;stop;open;create;close";
   }
 
   static void onCommand(void* client, void* terminal, const char * const command, void* userData)

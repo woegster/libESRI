@@ -77,6 +77,13 @@
  */
 #define GET_HISTORY(HANDLE)     (&((HANDLE)->history))
 
+ /**
+ * @brief Get the text completition handle
+ *
+ * @param HANDLE A pointer of the handle.
+ */
+#define GET_COMPLETE(HANDLE)     (&((HANDLE)->complete))
+
 /**
  * @brief Read from the serial port.
  *
@@ -364,76 +371,57 @@ static void actfunc_delete(ntshell_t *ntshell, vtrecv_action_t action, unsigned 
  */
 static void actfunc_suggest(ntshell_t *ntshell, vtrecv_action_t action, unsigned char ch)
 {
-    char buf[TEXTEDITOR_MAXLEN];
-    UNUSED_VARIABLE(action);
-    UNUSED_VARIABLE(ch);
-    if (SUGGEST_INDEX(ntshell) < 0) {
-        /*
-         * Enter the input suggestion mode.
-         * Get the suggested text string with the current text string.
-         */
-        if (text_editor_get_text(
-                    GET_EDITOR(ntshell),
-                    SUGGEST_SOURCE(ntshell),
-                    sizeof(SUGGEST_SOURCE(ntshell))) > 0) {
-            SUGGEST_INDEX(ntshell) = 0;
-            if (text_history_find(
-                        GET_HISTORY(ntshell),
-                        SUGGEST_INDEX(ntshell),
-                        SUGGEST_SOURCE(ntshell),
-                        buf,
-                        sizeof(buf)) == 0) {
-                /*
-                 * Found the suggestion.
-                 */
-                int n = ntlibc_strlen((const char *)buf);
-                VTSEND_ERASE_LINE(ntshell);
-                VTSEND_CURSOR_HEAD(ntshell);
-                PROMPT_WRITE(ntshell);
-                SERIAL_WRITE(ntshell, buf, n);
-                text_editor_set_text(GET_EDITOR(ntshell), buf);
-            } else {
-                /*
-                 * Not found the suggestion.
-                 */
-                SUGGEST_INDEX(ntshell) = -1;
-            }
-        }
-    } else {
-        /*
-         * Already the input suggestion mode.
-         * Search the next suggestion text string.
-         */
-        SUGGEST_INDEX(ntshell) = SUGGEST_INDEX(ntshell) + 1;
-        if (text_history_find(
-                    GET_HISTORY(ntshell),
-                    SUGGEST_INDEX(ntshell),
-                    SUGGEST_SOURCE(ntshell),
-                    buf,
-                    sizeof(buf)) == 0) {
-            /*
-             * Found the suggestion.
-             */
-            int n = ntlibc_strlen((const char *)buf);
-            VTSEND_ERASE_LINE(ntshell);
-            VTSEND_CURSOR_HEAD(ntshell);
-            PROMPT_WRITE(ntshell);
-            SERIAL_WRITE(ntshell, buf, n);
-            text_editor_set_text(GET_EDITOR(ntshell), buf);
-        } else {
-            /*
-             * Not found the suggestion.
-             * Recall the previous input text string.
-             */
-            int n = ntlibc_strlen(SUGGEST_SOURCE(ntshell));
-            VTSEND_ERASE_LINE(ntshell);
-            VTSEND_CURSOR_HEAD(ntshell);
-            PROMPT_WRITE(ntshell);
-            SERIAL_WRITE(ntshell, SUGGEST_SOURCE(ntshell), n);
-            text_editor_set_text(GET_EDITOR(ntshell), SUGGEST_SOURCE(ntshell));
-            SUGGEST_INDEX(ntshell) = -1;
-        }
+  UNUSED_VARIABLE(action);
+  UNUSED_VARIABLE(ch);
+
+  char text[TEXTEDITOR_MAXLEN];
+
+  /* get the current line */
+  if (text_editor_get_text(GET_EDITOR(ntshell), text, sizeof(text)) >= 0)
+  {
+    int matchCount = text_complete_getmatchcount(GET_COMPLETE(ntshell), text);
+    if (matchCount == 1)
+    {
+      char completedCommand[TEXTEDITOR_MAXLEN];
+      if (text_complete_getmatch(GET_COMPLETE(ntshell), text, 0, completedCommand) > 0)
+      {
+        int n = ntlibc_strlen((const char *)completedCommand) + 1;
+
+        //add a space after finished command to directly add arguments
+        completedCommand[n - 1] = ' ';
+        completedCommand[n] = 0;
+
+        VTSEND_ERASE_LINE(ntshell);
+        VTSEND_CURSOR_HEAD(ntshell);
+        PROMPT_WRITE(ntshell);
+        SERIAL_WRITE(ntshell, completedCommand, n);
+        text_editor_set_text(GET_EDITOR(ntshell), completedCommand);
+      }
     }
+    else if (matchCount > 1)
+    {
+      PROMPT_NEWLINE(ntshell);
+
+      //print all avaialbe commands
+      int i;
+      for (i = 0; i < matchCount; i++)
+      {
+        char possibleCommand[TEXTEDITOR_MAXLEN];
+        if (text_complete_getmatch(GET_COMPLETE(ntshell), text, i, possibleCommand) > 0)
+        {
+          SERIAL_WRITE(ntshell, possibleCommand, ntlibc_strlen(possibleCommand));
+          PROMPT_NEWLINE(ntshell);
+        }
+      }
+
+      char closetToAllSuggestions[TEXTEDITOR_MAXLEN];
+      text_complete_advancecommon(GET_COMPLETE(ntshell), text, closetToAllSuggestions);
+
+      PROMPT_WRITE(ntshell);      
+      SERIAL_WRITE(ntshell, closetToAllSuggestions, ntlibc_strlen(closetToAllSuggestions));
+      text_editor_set_text(GET_EDITOR(ntshell), closetToAllSuggestions);
+    }
+  }
 }
 
 /**
@@ -601,6 +589,7 @@ void ntshell_init(ntshell_t *p,
     vtrecv_init(&(p->vtrecv), vtrecv_callback);
     text_editor_init(GET_EDITOR(p));
     text_history_init(GET_HISTORY(p));
+    text_complete_init(GET_COMPLETE(p));
     SUGGEST_INDEX(p) = -1;
 
     /*
@@ -669,3 +658,17 @@ void ntshell_version(int *major, int *minor, int *release)
     *release = VERSION_RELEASE;
 }
 
+/**
+* @brief removes all entries from text completition
+*
+* @param p shell to clear completition for.
+*/
+void ntshell_completition_reset(ntshell_t *p)
+{
+  text_complete_init(GET_COMPLETE(p));
+}
+
+int ntshell_completition_setAt(ntshell_t *p, int at, const char* value)
+{
+  return text_complete_setat(GET_COMPLETE(p), at, value);
+}

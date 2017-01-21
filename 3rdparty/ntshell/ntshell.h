@@ -37,6 +37,7 @@
 #include "vtsend.h"
 #include "text_editor.h"
 #include "text_history.h"
+#include "text_complete.h"
 
 #define NTSHELL_PROMPT_MAXLEN   (32)
 #define NTSHELL_PROMPT_DEFAULT  ">"
@@ -55,11 +56,12 @@ typedef int (*NTSHELL_USER_CALLBACK)(const char *text, void *extobj);
  * You can use this handler on the stacks.
  */
 typedef struct {
-    unsigned int initcode;  /**< Initialization flag. */
-    vtsend_t vtsend;        /**< The handler of vtsend. */
-    vtrecv_t vtrecv;        /**< The handler of vtrecv. */
-    text_editor_t editor;   /**< The handler of text_editor. */
-    text_history_t history; /**< The handler of text_history. */
+    unsigned int initcode;    /**< Initialization flag. */
+    vtsend_t vtsend;          /**< The handler of vtsend. */
+    vtrecv_t vtrecv;          /**< The handler of vtrecv. */
+    text_editor_t editor;     /**< The handler of text_editor. */
+    text_history_t history;   /**< The handler of text_history. */
+    text_complete_t complete; /**< The handler of text_history. */
     int suggest_index;
     char suggest_source[TEXTEDITOR_MAXLEN];
     NTSHELL_SERIAL_READ func_read;
@@ -79,6 +81,8 @@ void ntshell_init(ntshell_t *p,
     NTSHELL_USER_CALLBACK func_callback,
     void *extobj);
 void ntshell_execute(ntshell_t *p);
+void ntshell_completition_reset(ntshell_t *p);
+int  ntshell_completition_setAt(ntshell_t *p, int at, const char* value);
 void ntshell_set_prompt(ntshell_t *p, const char *prompt);
 void ntshell_version(int *major, int *minor, int *release);
 

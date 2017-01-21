@@ -3,6 +3,7 @@
 #include "TelnetConnection.h"
 #include "EsriTerminal.h"
 #include <memory>
+#include <ntshell.h>
 
 namespace libESRI
 {
@@ -16,10 +17,8 @@ namespace libESRI
     EsriClientThread(toni::TcpClient& tcpClient, EsriHandlerFactory& handlerFactory);
     void EntryPoint();
   private:
-    bool SendWelcomeMessage();
-    bool SendCurrentDirectory();
-    bool HandleAutoComplete(std::string& input);
-    void AutoComplete(std::string& input, std::string& commonStartOfAllCandidates, std::vector<std::string>& candidates);
+    void SendWelcomeMessage();
+    void SetAutocompleteToNtshell(ntshell_t& shell);
     int OnShellRequiresRead(char* targetBuffer, int bytesToRead);
     int OnShellWantsToWrite(const char* sourceData, int sourceDataSize);
     int OnShellCallback(const char* textFromTerminal);

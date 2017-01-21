@@ -16,6 +16,7 @@ SET(SOURCES_NTSHELL
   3rdparty/ntshell/ntshell.c
   3rdparty/ntshell/text_editor.c
   3rdparty/ntshell/text_history.c
+  3rdparty/ntshell/text_complete.c
   3rdparty/ntshell/vtrecv.c
   3rdparty/ntshell/vtsend.c
 )
