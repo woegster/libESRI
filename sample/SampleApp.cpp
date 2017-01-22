@@ -1,78 +1,71 @@
-#include "libESRI.h"
+#include "../bindings/esri.hpp"
 #include <iostream>
-#include <cstring>
+#include <thread>
 
-class EsriHandlers
+
+class MyEsriClient : public IEsriClient
 {
 public:
-  static char const * const onWelcomeMessage(void* client, void* userData)
+  MyEsriClient(void* clientFromLibrary)
+    : esriClientForSendingText(clientFromLibrary)
   {
-    return "Welcome to ESRI interface of my App";
+
+  }
+  virtual const char* providePromptText()
+  {
+    return "core:~#";
   }
 
-  static char const * const getCurrentDirectory(void* client, void* userData)
+  virtual const char* provideCommands()
   {
-    return "esri@BusinessApp:/core# ";
+    return "sync;async";
   }
 
-  static char const * const provideCommands(void* client, void* userData)
-  {
-    return "async;sync";
-  }
-
-  static void onCommand(void* client, const char * const command, void* userData)
+  virtual void onCommand(const char* command)
   {
     if (strcmp(command, "async") == 0)
     {
-      char const response[] = "doing async work\r\ncancel with CTRL-C";
-      EsriSendToTerminal(client, response, sizeof(response));
+      char start[] = "Doing Asynchronus work - use CTRL-C to abort";
+      EsriSendToTerminal(esriClientForSendingText, start, sizeof(start));
+      return;
     }
 
     if (strcmp(command, "sync") == 0)
     {
-      char const response[] = "doing syncronus work - returning directly";
-      EsriSendToTerminal(client, response, sizeof(response));
-      EsriPromptTerminal(client);
+      char start[] = "Doing Synchronus work";
+      EsriSendToTerminal(esriClientForSendingText, start, sizeof(start));
+
+      std::this_thread::sleep_for(std::chrono::seconds(2));
+
+      char stop[] = "finished";
+      EsriSendToTerminal(esriClientForSendingText, stop, sizeof(stop));
+      EsriPromptTerminal(esriClientForSendingText);
+      return;
     }
-    
+
+    char unknwnCmd[] = "Unkown command";
+    EsriSendToTerminal(esriClientForSendingText, unknwnCmd, sizeof(unknwnCmd));
+    EsriPromptTerminal(esriClientForSendingText);
   }
 
-  static void onAbortCommand(void* client, void* userData)
+  virtual void onAbortCommand()
   {
-    char const abort[] = "\r\naborted";
-    EsriSendToTerminal(client, abort, sizeof(abort));
-    EsriPromptTerminal(client);
+    char stop[] = "aborted";
+    EsriSendToTerminal(esriClientForSendingText, stop, sizeof(stop));
+    EsriPromptTerminal(esriClientForSendingText);
   }
-
-  static void onDisconnect(void* client, void* userData)
-  {
-
-  }
+private:
+  void* esriClientForSendingText;
 };
 
 int main()
 {
-  void* esriInstance = EsriCreateInstance();
-  EsriSetHandlersForInstance(esriInstance,
-                             nullptr,
-                             &EsriHandlers::onWelcomeMessage,
-                             &EsriHandlers::getCurrentDirectory,
-                             &EsriHandlers::provideCommands,
-                             &EsriHandlers::onCommand,
-                             &EsriHandlers::onDisconnect,
-                             &EsriHandlers::onAbortCommand);
+  EsriInstance myInstance("Welcome to Telnet Interface", [](void* esriClientForSendingText)
+  {
+    return std::unique_ptr<IEsriClient>(new MyEsriClient(esriClientForSendingText));
+  });
+  myInstance.Start(55104, 10);
 
-  const unsigned short port = 55104;
-  EsriStartInstance(esriInstance, port, 5);
-
-
-  std::cout << "This is the sample application.\n";
-  std::cout << "It will block and do its other things\n";
-  std::cout << " - but esri gives each thread a client\n";
-  std::cout << "Connect to " << port <<" with telnet an use the application\n\n";
-
-  std::cout << "Press enter here to quit this sample";
+  std::cout << "Press enter here to quit this sample" << std::endl;
   std::cin.get();
-  
-  EsriDeleteInstance(esriInstance);
 }
