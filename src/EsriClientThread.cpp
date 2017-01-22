@@ -13,6 +13,8 @@ namespace libESRI
   EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandlerFactory& handlerFactory)
     : m_Telnet(tcpClient)
     , m_CommandIsRunning(false)
+    , m_InternalHandler([&](){ this->OnPrompt();},
+                        [&](const char* sourceData, int sourceDataSize){this->OnSendToTerminal(sourceData, sourceDataSize);})
   {
     m_handler = handlerFactory.CreateNewHandler([&]()
     {
@@ -53,6 +55,9 @@ namespace libESRI
   void EsriClientThread::OnSendToTerminal(const char* sourceData, int sourceDataSize)
   {
     m_Telnet.WriteText(sourceData, sourceDataSize);
+
+    const char crlf[] = "\r\n";
+    m_Telnet.WriteText(crlf, sizeof(crlf));
   }
   
   void EsriClientThread::SetAutocompleteToNtshell(ntshell_t& shell)
@@ -130,11 +135,11 @@ namespace libESRI
   int EsriClientThread::OnShellCallback(const char* textFromTerminal)
   {
     const auto trimmed = toni::TrimRight<std::string>(textFromTerminal);
-    if (!m_InternalHandler.ExecuteInternalCommand(trimmed, m_Telnet))
+    if (!m_InternalHandler.ExecuteInternalCommand(trimmed))
     {
       m_CommandIsRunning = true;
       m_handler->OnCommitCommand(trimmed.c_str());
-    }    
+    }
     return 0;
   }
   

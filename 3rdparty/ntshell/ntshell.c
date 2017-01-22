@@ -656,7 +656,6 @@ void ntshell_version(int *major, int *minor, int *release)
 
 void ntshell_do_prompt(ntshell_t *p)
 {
-  PROMPT_NEWLINE(p);
   PROMPT_WRITE(p);
 }
 

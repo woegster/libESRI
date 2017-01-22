@@ -4,6 +4,7 @@
 #include <memory>
 #include <ntshell.h>
 #include "EsriInternalCommands.h"
+#include <atomic>
 
 namespace libESRI
 {
@@ -31,7 +32,7 @@ namespace libESRI
     EsriInternalCommands m_InternalHandler;
     TelnetConnection m_Telnet;
     ntshell_t terminalEmulation;
-    bool m_CommandIsRunning;
+    std::atomic<bool> m_CommandIsRunning;
   };
 }
 

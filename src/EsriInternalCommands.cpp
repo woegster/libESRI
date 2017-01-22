@@ -9,7 +9,10 @@
 
 namespace libESRI
 {
-  EsriInternalCommands::EsriInternalCommands()
+  EsriInternalCommands::EsriInternalCommands(std::function<void()>&& prompt,
+                                             std::function<void(const char*, int)>&& sendToTerminal)
+    : m_promptTerminal(std::move(prompt))
+    , m_sendToTerminal(std::move(sendToTerminal))
   {
     BuildCommandTable();
 
@@ -21,13 +24,14 @@ namespace libESRI
     }
   }
 
-  bool EsriInternalCommands::ExecuteInternalCommand(const std::string& command, TelnetConnection& outputTo)
+  bool EsriInternalCommands::ExecuteInternalCommand(const std::string& command)
   {
     auto functionToExecute = m_internalFunctionMap.find(command);
     if (functionToExecute != m_internalFunctionMap.end())
     {
       std::string functionResult = functionToExecute->second();
-      outputTo.WriteText(functionResult.c_str(), functionResult.length());
+      m_sendToTerminal(functionResult.c_str(), functionResult.length());
+      m_promptTerminal();
       return true;
     }
 
