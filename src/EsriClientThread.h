@@ -23,7 +23,8 @@ namespace libESRI
     int OnShellWantsToWrite(const char* sourceData, int sourceDataSize);
     int OnShellCallback(const char* textFromTerminal);
   private:
-    static bool isControlCodeToDisconnect(const char controlCode);
+    static bool isDisconnectChar(const char controlCode);
+    static bool isAbortChar(const char controlCode);
   private:
     std::unique_ptr<EsriHandler> m_handler;
     EsriInternalCommands m_InternalHandler;

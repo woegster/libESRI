@@ -16,18 +16,18 @@ public:
 
   static char const * const provideCommands(void* client, void* userData)
   {
-    return "start;stop;open;create;close";
+    return "async";
   }
 
   static void onCommand(void* client, void* terminal, const char * const command, void* userData)
   {
-    char const response[] = "response";
+    char const response[] = "doing async work";
     EsriSendToTerminal(terminal, response, sizeof(response));
   }
 
   static void onAbortCommand(void* client, void* terminal, void* userData)
   {
-    char const abort[] = "abort";
+    char const abort[] = "aborted";
     EsriSendToTerminal(terminal, abort, sizeof(abort));
   }
 

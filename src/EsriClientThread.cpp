@@ -17,16 +17,14 @@ namespace libESRI
     m_handler = handlerFactory.CreateNewHandler(m_Terminal);
   }
 
-  bool EsriClientThread::isControlCodeToDisconnect(const char controlCode)
+  bool EsriClientThread::isDisconnectChar(const char controlCode)
   {
-    switch (controlCode)
-    {
-      case '\x3': //CTRL-C
-      case '\x4': //CTRL-D
-        return true;
-    }
+    return controlCode == '\x4'; //CTRL-D
+  }
 
-    return false;
+  bool EsriClientThread::isAbortChar(const char controlCode)
+  {
+    return controlCode == '\x3'; //CTRL-C
   }
 
 
@@ -61,13 +59,6 @@ namespace libESRI
     if (m_Telnet.hasNetworkError())
       return 0;
 
-    //mostly the case: terminal request one char
-    if (bytesToRead == 1)
-    {
-      targetBuffer[0] = m_Telnet.ReadChar();
-      return isControlCodeToDisconnect(targetBuffer[0]) ? 0 : bytesToRead;
-    }
-    
     //allocate buffer
     std::vector<char> textBuffer;
     textBuffer.resize(bytesToRead);
@@ -76,9 +67,14 @@ namespace libESRI
     for (int i = 0; i < bytesToRead; i++)
     {
       textBuffer[i] = m_Telnet.ReadChar();
-      if (isControlCodeToDisconnect(textBuffer[i]))
+      if (isDisconnectChar(textBuffer[i]))
       {
         return 0;
+      }
+
+      if (isAbortChar(textBuffer[i]))
+      {
+        m_handler->OnAbortCommand();
       }
     }
 
