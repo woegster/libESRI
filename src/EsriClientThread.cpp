@@ -13,17 +13,11 @@ namespace libESRI
   EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandlerFactory& handlerFactory)
     : m_Telnet(tcpClient)
     , m_CommandIsRunning(false)
-    , m_InternalHandler([&](){ this->OnPrompt();},
-                        [&](const char* sourceData, int sourceDataSize){this->OnSendToTerminal(sourceData, sourceDataSize);})
+    , m_InternalHandler(std::bind(&EsriClientThread::OnPrompt, this),
+                        std::bind(&EsriClientThread::OnSendToTerminal, this, std::placeholders::_1, std::placeholders::_2))
   {
-    m_handler = handlerFactory.CreateNewHandler([&]()
-    {
-      this->OnPrompt();
-    },
-                                                [&](const char* sourceData, int sourceDataSize)
-    {
-      this->OnSendToTerminal(sourceData, sourceDataSize);
-    });
+    m_handler = handlerFactory.CreateNewHandler(std::bind(&EsriClientThread::OnPrompt, this),
+                                                std::bind(&EsriClientThread::OnSendToTerminal, this, std::placeholders::_1, std::placeholders::_2));
   }
 
   bool EsriClientThread::isDisconnectChar(const char controlCode)

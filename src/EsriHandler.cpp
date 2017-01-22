@@ -10,7 +10,7 @@ libESRI::EsriHandler::EsriHandler(
   fnHandlerOnExit onExit,
   fnHandlerOnAbortCommand onAbortCommand,
   std::function<void(void)>&& onPrompt,
-  std::function<void(const char * const text, int textLength)>&& onSendText,
+  std::function<void(const char *, int)>&& onSendText,
   void* userData)
   : m_fnHandlerOnProvideWelcomeMessage(onProvideWelcomeMessage)
   , m_fnHandlerOnGetCurrentDirectory(onGetCurrentDirectory)

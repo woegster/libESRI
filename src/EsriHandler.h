@@ -14,7 +14,7 @@ namespace libESRI
       fnHandlerOnExit,
       fnHandlerOnAbortCommand,
       std::function<void(void)>&& onPrompt,
-      std::function<void(const char * const text, int textLength)>&& onSendText,
+      std::function<void(const char *, int)>&& onSendText,
       void* userData);
     ~EsriHandler();
 
@@ -33,7 +33,7 @@ namespace libESRI
     fnHandlerOnAbortCommand m_fnHandlerOnAbortCommand;
     fnHandlerOnExit m_fnHandlerOnExit;
     std::function<void(void)> m_onPrompt;
-    std::function<void(const char * const text, int textLength)> m_onSendText;
+    std::function<void(const char *, int)> m_onSendText;
     void* m_userData;
   };
 }

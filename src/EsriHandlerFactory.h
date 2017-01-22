@@ -9,9 +9,6 @@ namespace libESRI
   class EsriHandlerFactory
   {
   public:
-    std::unique_ptr<EsriHandler> CreateNewHandler(std::function<void(void)>&& onPrompt,
-                                                  std::function<void(const char * const text, int textLength)>&& onSendText);
-  public:
     EsriHandlerFactory(
       fnHandlerOnProvideWelcomeMessage,
       fnHandlerOnGetCurrentDirectory,
@@ -20,6 +17,9 @@ namespace libESRI
       fnHandlerOnExit,
       fnHandlerOnAbortCommand,
       void* userData);
+  public:
+    std::unique_ptr<EsriHandler> CreateNewHandler(std::function<void(void)>&& onPrompt,
+                                                  std::function<void(const char *, int)>&& onSendText);  
   private:
     fnHandlerOnProvideWelcomeMessage m_fnHandlerOnProvideWelcomeMessage;
     fnHandlerOnGetCurrentDirectory m_fnHandlerOnGetCurrentDirectory;

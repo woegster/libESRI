@@ -23,7 +23,7 @@ libESRI::EsriHandlerFactory::EsriHandlerFactory(
 
 std::unique_ptr<libESRI::EsriHandler>
 libESRI::EsriHandlerFactory::CreateNewHandler(std::function<void(void)>&& onPrompt,
-                                              std::function<void(const char * const text, int textLength)>&& onSendText)
+                                              std::function<void(const char *, int)>&& onSendText)
 {
   return std::unique_ptr<libESRI::EsriHandler>(new EsriHandler(
     m_fnHandlerOnProvideWelcomeMessage,

@@ -31,6 +31,7 @@ if ( WIN32 )
 endif()
 
 SET(SOURCES 
+  src/stdafx.cpp #must be the first in list cotire uses this fiel to create the pch on msvc/intel cpp
   src/EsriClientThread.cpp
   src/EsriHandler.cpp
   src/EsriHandlerFactory.cpp
@@ -68,7 +69,7 @@ endif()
 
 set_target_properties(${TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/stdafx.h")
 set_target_properties(${TARGET} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-cotire(${TARGET})
+#cotire(${TARGET})
 
 #sample app
 include_directories(include)

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TelnetConnection.h"
 #include "TcpClient.h"
 
