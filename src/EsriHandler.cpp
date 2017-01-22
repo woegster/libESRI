@@ -9,6 +9,7 @@ libESRI::EsriHandler::EsriHandler(
   fnHandlerOnCommitCommand onCommitCommand,
   fnHandlerOnExit onExit,
   fnHandlerOnAbortCommand onAbortCommand,
+  std::function<void(void)>&& onPrompt,
   libESRI::EsriTerminal& terminal,
   void* userData)
   : m_fnHandlerOnProvideWelcomeMessage(onProvideWelcomeMessage)
@@ -17,6 +18,7 @@ libESRI::EsriHandler::EsriHandler(
   , m_fnHandlerOnCommitCommand(onCommitCommand)
   , m_fnHandlerOnExit(onExit)
   , m_fnHandlerOnAbortCommand(onAbortCommand)
+  , m_onPrompt(std::move(onPrompt))
   , m_Terminal(terminal)
   , m_userData(userData)
 {
@@ -77,4 +79,12 @@ void libESRI::EsriHandler::OnAbortCommand()
 void libESRI::EsriHandler::SendToTerminal(const char * const text) const
 {
   EsriSendToTerminal(&m_Terminal, text, strlen(text));
+}
+
+void libESRI::EsriHandler::DoPromptTerminal()
+{
+  if (m_onPrompt)
+  {
+    m_onPrompt();
+  }
 }

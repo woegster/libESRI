@@ -235,8 +235,6 @@ static void actfunc_enter(ntshell_t *ntshell, vtrecv_action_t action, unsigned c
     text_history_write(GET_HISTORY(ntshell), txt);
     PROMPT_NEWLINE(ntshell);
     CALLBACK(ntshell, txt);
-    PROMPT_NEWLINE(ntshell);
-    PROMPT_WRITE(ntshell);
 }
 
 /**
@@ -257,8 +255,6 @@ static void actfunc_cancel(ntshell_t *ntshell, vtrecv_action_t action, unsigned 
     UNUSED_VARIABLE(ch);
     text_editor_clear(GET_EDITOR(ntshell));
     SERIAL_WRITE(ntshell, "^C", 2);
-    PROMPT_NEWLINE(ntshell);
-    PROMPT_WRITE(ntshell);
 }
 
 /**
@@ -656,6 +652,12 @@ void ntshell_version(int *major, int *minor, int *release)
     *major = VERSION_MAJOR;
     *minor = VERSION_MINOR;
     *release = VERSION_RELEASE;
+}
+
+void ntshell_do_prompt(ntshell_t *p)
+{
+  PROMPT_NEWLINE(p);
+  PROMPT_WRITE(p);
 }
 
 /**

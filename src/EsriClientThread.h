@@ -19,6 +19,7 @@ namespace libESRI
   private:
     void SendWelcomeMessage();
     void SetAutocompleteToNtshell(ntshell_t& shell);
+    void OnPrompt();
     int OnShellRequiresRead(char* targetBuffer, int bytesToRead);
     int OnShellWantsToWrite(const char* sourceData, int sourceDataSize);
     int OnShellCallback(const char* textFromTerminal);
@@ -30,6 +31,8 @@ namespace libESRI
     EsriInternalCommands m_InternalHandler;
     TelnetConnection m_Telnet;
     EsriTerminal m_Terminal;
+    ntshell_t terminalEmulation;
+    bool m_CommandIsRunning;
   };
 }
 

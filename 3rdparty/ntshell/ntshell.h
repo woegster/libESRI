@@ -84,6 +84,7 @@ void ntshell_execute(ntshell_t *p);
 void ntshell_completition_reset(ntshell_t *p);
 int  ntshell_completition_setAt(ntshell_t *p, int at, const char* value);
 void ntshell_set_prompt(ntshell_t *p, const char *prompt);
+void ntshell_do_prompt(ntshell_t *p);
 void ntshell_version(int *major, int *minor, int *release);
 
 #ifdef __cplusplus

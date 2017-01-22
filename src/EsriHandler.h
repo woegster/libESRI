@@ -15,6 +15,7 @@ namespace libESRI
       fnHandlerOnCommitCommand,
       fnHandlerOnExit,
       fnHandlerOnAbortCommand,
+      std::function<void(void)>&& onPrompt,
       libESRI::EsriTerminal&,
       void* userData);
     ~EsriHandler();
@@ -25,6 +26,7 @@ namespace libESRI
     void OnCommitCommand(const char * const command);
     void OnAbortCommand();
     void SendToTerminal(const char * const text) const;
+    void DoPromptTerminal();
     
   private:
     fnHandlerOnProvideWelcomeMessage m_fnHandlerOnProvideWelcomeMessage;
@@ -34,6 +36,7 @@ namespace libESRI
     fnHandlerOnAbortCommand m_fnHandlerOnAbortCommand;
     fnHandlerOnExit m_fnHandlerOnExit;
     libESRI::EsriTerminal& m_Terminal;
+    std::function<void(void)> m_onPrompt;
     void* m_userData;
   };
 }

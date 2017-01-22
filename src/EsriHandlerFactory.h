@@ -1,5 +1,6 @@
 #pragma once
 #include "../include/libESRI.h"
+#include <functional>
 
 namespace libESRI
 {
@@ -9,7 +10,7 @@ namespace libESRI
   class EsriHandlerFactory
   {
   public:
-    std::unique_ptr<EsriHandler> CreateNewHandler(EsriTerminal& terminal);
+    std::unique_ptr<EsriHandler> CreateNewHandler(EsriTerminal& terminal, std::function<void(void)>&& onPrompt);
   public:
     EsriHandlerFactory(
       fnHandlerOnProvideWelcomeMessage,

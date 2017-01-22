@@ -13,8 +13,12 @@ namespace libESRI
   EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandlerFactory& handlerFactory)
     : m_Telnet(tcpClient) //holy fuck
     , m_Terminal(m_Telnet)//holy fuck
+    , m_CommandIsRunning(false)
   {
-    m_handler = handlerFactory.CreateNewHandler(m_Terminal);
+    m_handler = handlerFactory.CreateNewHandler(m_Terminal, [&]()
+    {
+      this->OnPrompt();
+    });
   }
 
   bool EsriClientThread::isDisconnectChar(const char controlCode)
@@ -35,6 +39,12 @@ namespace libESRI
     {
       m_Telnet.WriteText(welcomeMessage, strlen(welcomeMessage));
     }
+  }
+
+  void EsriClientThread::OnPrompt()
+  {
+    m_CommandIsRunning = false;
+    ntshell_do_prompt(&terminalEmulation);
   }
   
   void EsriClientThread::SetAutocompleteToNtshell(ntshell_t& shell)
@@ -58,6 +68,23 @@ namespace libESRI
   {
     if (m_Telnet.hasNetworkError())
       return 0;
+
+    if (m_CommandIsRunning)
+    {
+      const char charFromTelnet = m_Telnet.ReadChar();
+      if (isDisconnectChar(charFromTelnet))
+      {
+        return 0;
+      }
+
+      if (isAbortChar(charFromTelnet))
+      {
+        m_handler->OnAbortCommand();
+      }
+
+      targetBuffer[0] = 0;
+      return 1;
+    }    
 
     //allocate buffer
     std::vector<char> textBuffer;
@@ -97,6 +124,7 @@ namespace libESRI
     const auto trimmed = toni::TrimRight<std::string>(textFromTerminal);
     if (!m_InternalHandler.ExecuteInternalCommand(trimmed, m_Telnet))
     {
+      m_CommandIsRunning = true;
       m_handler->OnCommitCommand(trimmed.c_str());
     }    
     return 0;
@@ -121,7 +149,7 @@ namespace libESRI
 
     SendWelcomeMessage();
 
-    ntshell_t terminalEmulation;
+    
     ntshell_init(&terminalEmulation, shell_read_proxy, shell_write_proxy, shell_callback_proxy, this);
     char const * const directory = m_handler->OnGetCurrentDirectory();
     if (directory)

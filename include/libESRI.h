@@ -34,5 +34,5 @@ extern "C"
   ESRIEXPORT void ESRIAPI EsriSetHandlersForInstance(void* instance, void* userData, fnHandlerOnProvideWelcomeMessage, fnHandlerOnGetCurrentDirectory, fnHandlerOnProvideCommands, fnHandlerOnCommitCommand, fnHandlerOnExit, fnHandlerOnAbortCommand);
   ESRIEXPORT int ESRIAPI EsriStartInstance(void* instance, unsigned short port, int maxConnections);
   ESRIEXPORT int ESRIAPI EsriSendToTerminal(void* terminal, char const * const message, int messageLength);
-  ESRIEXPORT int ESRIAPI EsriPromptTerminal(void* handler, void* terminal);
+  ESRIEXPORT void ESRIAPI EsriPromptTerminal(void* handler);
 }

@@ -1,5 +1,6 @@
 #include "libESRI.h"
 #include <iostream>
+#include <cstring>
 
 class EsriHandlers
 {
@@ -16,19 +17,31 @@ public:
 
   static char const * const provideCommands(void* client, void* userData)
   {
-    return "async";
+    return "async;sync";
   }
 
   static void onCommand(void* client, void* terminal, const char * const command, void* userData)
   {
-    char const response[] = "doing async work";
-    EsriSendToTerminal(terminal, response, sizeof(response));
+    if (strcmp(command, "async") == 0)
+    {
+      char const response[] = "doing async work\r\ncancel with CTRL-C";
+      EsriSendToTerminal(terminal, response, sizeof(response));
+    }
+
+    if (strcmp(command, "sync") == 0)
+    {
+      char const response[] = "doing syncronus work - returning directly";
+      EsriSendToTerminal(terminal, response, sizeof(response));
+      EsriPromptTerminal(client);
+    }
+    
   }
 
   static void onAbortCommand(void* client, void* terminal, void* userData)
   {
-    char const abort[] = "aborted";
+    char const abort[] = "\r\naborted";
     EsriSendToTerminal(terminal, abort, sizeof(abort));
+    EsriPromptTerminal(client);
   }
 
   static void onDisconnect(void* client, void* userData)
