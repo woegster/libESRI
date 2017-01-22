@@ -34,9 +34,10 @@ void EsriSetHandlersForInstance(
   fnHandlerOnGetCurrentDirectory onGetCurrentDirectory,
   fnHandlerOnProvideCommands onProvideCommands,
   fnHandlerOnCommitCommand onCommitCommand,
-  fnHandlerOnExit onExit)
+  fnHandlerOnExit onExit,
+  fnHandlerOnAbortCommand onAbortCommand)
 {
-  auto* capiHandlerFactory = new libESRI::EsriHandlerFactory(onProvideWelcomeMessage, onGetCurrentDirectory, onProvideCommands, onCommitCommand, onExit, userData);
+  auto* capiHandlerFactory = new libESRI::EsriHandlerFactory(onProvideWelcomeMessage, onGetCurrentDirectory, onProvideCommands, onCommitCommand, onExit, onAbortCommand, userData);
   auto typedInstance = (libESRI::EsriInstance*)instance;
   typedInstance->SetAndTakeOwnershipOfHandlerFactory(capiHandlerFactory);
 }

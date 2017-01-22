@@ -8,6 +8,7 @@ libESRI::EsriHandler::EsriHandler(
   fnHandlerOnProvideCommands onProvideCommands,
   fnHandlerOnCommitCommand onCommitCommand,
   fnHandlerOnExit onExit,
+  fnHandlerOnAbortCommand onAbortCommand,
   libESRI::EsriTerminal& terminal,
   void* userData)
   : m_fnHandlerOnProvideWelcomeMessage(onProvideWelcomeMessage)
@@ -15,6 +16,7 @@ libESRI::EsriHandler::EsriHandler(
   , m_fnHandlerOnProvideCommands(onProvideCommands)
   , m_fnHandlerOnCommitCommand(onCommitCommand)
   , m_fnHandlerOnExit(onExit)
+  , m_fnHandlerOnAbortCommand(onAbortCommand)
   , m_Terminal(terminal)
   , m_userData(userData)
 {
@@ -61,6 +63,14 @@ void libESRI::EsriHandler::OnCommitCommand(const char * const command)
   if (m_fnHandlerOnCommitCommand)
   {
     m_fnHandlerOnCommitCommand(this, &m_Terminal, command, m_userData);
+  }
+}
+
+void libESRI::EsriHandler::OnAbortCommand()
+{
+  if (m_fnHandlerOnAbortCommand)
+  {
+    m_fnHandlerOnAbortCommand(this, &m_Terminal, m_userData);
   }
 }
 

@@ -25,6 +25,12 @@ public:
     EsriSendToTerminal(terminal, response, sizeof(response));
   }
 
+  static void onAbortCommand(void* client, void* terminal, void* userData)
+  {
+    char const abort[] = "abort";
+    EsriSendToTerminal(terminal, abort, sizeof(abort));
+  }
+
   static void onDisconnect(void* client, void* userData)
   {
 
@@ -40,7 +46,8 @@ int main()
                              &EsriHandlers::getCurrentDirectory,
                              &EsriHandlers::provideCommands,
                              &EsriHandlers::onCommand,
-                             &EsriHandlers::onDisconnect);
+                             &EsriHandlers::onDisconnect,
+                             &EsriHandlers::onAbortCommand);
 
   const unsigned short port = 55104;
   EsriStartInstance(esriInstance, port, 5);
