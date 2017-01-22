@@ -30,8 +30,10 @@ if ( WIN32 )
   SET(TARGET libESRI) #windows dlls are not prefixed with dll, add it here for unified output names
 endif()
 
+#first item in list is used for pch creation in intel/msvc
+#use a dedicated stdafx.cpp so that otherwise changing a produciton cpp does not cause a pch rebuild
 SET(SOURCES 
-  src/stdafx.cpp #must be the first in list cotire uses this fiel to create the pch on msvc/intel cpp
+  src/stdafx.cpp
   src/EsriClientThread.cpp
   src/EsriHandler.cpp
   src/EsriHandlerFactory.cpp
@@ -69,7 +71,7 @@ endif()
 
 set_target_properties(${TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/stdafx.h")
 set_target_properties(${TARGET} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-#cotire(${TARGET})
+cotire(${TARGET})
 
 #sample app
 include_directories(include)
