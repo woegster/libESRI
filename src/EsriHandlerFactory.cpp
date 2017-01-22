@@ -21,7 +21,9 @@ libESRI::EsriHandlerFactory::EsriHandlerFactory(
 
 }
 
-std::unique_ptr<libESRI::EsriHandler> libESRI::EsriHandlerFactory::CreateNewHandler(EsriTerminal& terminal, std::function<void(void)>&& onPrompt)
+std::unique_ptr<libESRI::EsriHandler>
+libESRI::EsriHandlerFactory::CreateNewHandler(std::function<void(void)>&& onPrompt,
+                                              std::function<void(const char * const text, int textLength)>&& onSendText)
 {
   return std::unique_ptr<libESRI::EsriHandler>(new EsriHandler(
     m_fnHandlerOnProvideWelcomeMessage,
@@ -31,6 +33,7 @@ std::unique_ptr<libESRI::EsriHandler> libESRI::EsriHandlerFactory::CreateNewHand
     m_fnOnHandlerExit,
     m_fnHandlerOnAbortCommand,
     std::move(onPrompt),
-    terminal, m_userData));
+    std::move(onSendText),
+    m_userData));
 }
 

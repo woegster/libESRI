@@ -36,7 +36,6 @@ SET(SOURCES
   src/EsriHandlerFactory.cpp
   src/EsriInstance.cpp
   src/EsriInternalCommands.cpp
-  src/EsriTerminal.cpp
   src/libESRI.cpp
   src/SetThreadName.cpp
   src/SocketEndpoint.cpp

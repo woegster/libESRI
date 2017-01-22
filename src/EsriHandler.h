@@ -3,8 +3,6 @@
 
 namespace libESRI
 {
-  class EsriTerminal;
-
   class EsriHandler
   {
   public:
@@ -16,7 +14,7 @@ namespace libESRI
       fnHandlerOnExit,
       fnHandlerOnAbortCommand,
       std::function<void(void)>&& onPrompt,
-      libESRI::EsriTerminal&,
+      std::function<void(const char * const text, int textLength)>&& onSendText,
       void* userData);
     ~EsriHandler();
 
@@ -25,9 +23,8 @@ namespace libESRI
     char const * const OnProvideCommands();
     void OnCommitCommand(const char * const command);
     void OnAbortCommand();
-    void SendToTerminal(const char * const text) const;
     void DoPromptTerminal();
-    
+    void DoSendTextToTerminal(const char * const text, int textLength);
   private:
     fnHandlerOnProvideWelcomeMessage m_fnHandlerOnProvideWelcomeMessage;
     fnHandlerOnGetCurrentDirectory m_fnHandlerOnGetCurrentDirectory;
@@ -35,8 +32,8 @@ namespace libESRI
     fnHandlerOnCommitCommand m_fnHandlerOnCommitCommand;
     fnHandlerOnAbortCommand m_fnHandlerOnAbortCommand;
     fnHandlerOnExit m_fnHandlerOnExit;
-    libESRI::EsriTerminal& m_Terminal;
     std::function<void(void)> m_onPrompt;
+    std::function<void(const char * const text, int textLength)> m_onSendText;
     void* m_userData;
   };
 }

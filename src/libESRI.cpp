@@ -2,7 +2,6 @@
 #include "../include/libESRI.h"
 #include "EsriInstance.h"
 #include "EsriHandlerFactory.h"
-#include "EsriTerminal.h"
 #include "EsriHandler.h"
 
 extern "C"
@@ -49,10 +48,10 @@ int EsriStartInstance(void* instance, unsigned short port, int maxConnections)
   return typedInstance->Start(port, maxConnections) ? 1 : 0;
 }
 
-int EsriSendToTerminal(void* terminal, char const * const message, int messageLength)
+void EsriSendToTerminal(void* handler, char const * const message, int messageLength)
 {
-  auto typedTerminal = (libESRI::EsriTerminal*)terminal;
-  return typedTerminal->EsriSendToTerminal(message, messageLength) ? 1 : 0;
+  auto typedHandler = (libESRI::EsriHandler*)handler;
+  typedHandler->DoSendTextToTerminal(message, messageLength);
 }
 
 void EsriPromptTerminal(void* handler)

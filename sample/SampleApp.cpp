@@ -20,27 +20,27 @@ public:
     return "async;sync";
   }
 
-  static void onCommand(void* client, void* terminal, const char * const command, void* userData)
+  static void onCommand(void* client, const char * const command, void* userData)
   {
     if (strcmp(command, "async") == 0)
     {
       char const response[] = "doing async work\r\ncancel with CTRL-C";
-      EsriSendToTerminal(terminal, response, sizeof(response));
+      EsriSendToTerminal(client, response, sizeof(response));
     }
 
     if (strcmp(command, "sync") == 0)
     {
       char const response[] = "doing syncronus work - returning directly";
-      EsriSendToTerminal(terminal, response, sizeof(response));
+      EsriSendToTerminal(client, response, sizeof(response));
       EsriPromptTerminal(client);
     }
     
   }
 
-  static void onAbortCommand(void* client, void* terminal, void* userData)
+  static void onAbortCommand(void* client, void* userData)
   {
     char const abort[] = "\r\naborted";
-    EsriSendToTerminal(terminal, abort, sizeof(abort));
+    EsriSendToTerminal(client, abort, sizeof(abort));
     EsriPromptTerminal(client);
   }
 

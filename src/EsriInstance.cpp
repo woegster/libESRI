@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "EsriInstance.h"
 #include "EsriClientThread.h"
-#include "EsriTerminal.h"
 #include "EsriHandlerFactory.h"
 #include "TcpClient.h"
 #include "SocketEndpointConverter.h"

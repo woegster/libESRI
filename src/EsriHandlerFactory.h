@@ -4,13 +4,13 @@
 
 namespace libESRI
 {
-  class EsriTerminal;
   class EsriHandler;
 
   class EsriHandlerFactory
   {
   public:
-    std::unique_ptr<EsriHandler> CreateNewHandler(EsriTerminal& terminal, std::function<void(void)>&& onPrompt);
+    std::unique_ptr<EsriHandler> CreateNewHandler(std::function<void(void)>&& onPrompt,
+                                                  std::function<void(const char * const text, int textLength)>&& onSendText);
   public:
     EsriHandlerFactory(
       fnHandlerOnProvideWelcomeMessage,

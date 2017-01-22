@@ -11,13 +11,16 @@
 namespace libESRI
 {
   EsriClientThread::EsriClientThread(toni::TcpClient& tcpClient, EsriHandlerFactory& handlerFactory)
-    : m_Telnet(tcpClient) //holy fuck
-    , m_Terminal(m_Telnet)//holy fuck
+    : m_Telnet(tcpClient)
     , m_CommandIsRunning(false)
   {
-    m_handler = handlerFactory.CreateNewHandler(m_Terminal, [&]()
+    m_handler = handlerFactory.CreateNewHandler([&]()
     {
       this->OnPrompt();
+    },
+                                                [&](const char* sourceData, int sourceDataSize)
+    {
+      this->OnSendToTerminal(sourceData, sourceDataSize);
     });
   }
 
@@ -45,6 +48,11 @@ namespace libESRI
   {
     m_CommandIsRunning = false;
     ntshell_do_prompt(&terminalEmulation);
+  }
+
+  void EsriClientThread::OnSendToTerminal(const char* sourceData, int sourceDataSize)
+  {
+    m_Telnet.WriteText(sourceData, sourceDataSize);
   }
   
   void EsriClientThread::SetAutocompleteToNtshell(ntshell_t& shell)
