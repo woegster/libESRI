@@ -58,12 +58,18 @@ namespace toni
   stringClass TrimRight(const stringClass& source)
   {
     stringClass trimmed;
+    bool foundNonSpaceChars = false;
     for (size_t i = source.length()-1; i >= 0 && i != stringClass::npos; --i)
     {
       const auto curChar = source[i];
-      if (!details::isWhitespace(curChar))
+      if (details::isWhitespace(curChar) && !foundNonSpaceChars)
+      {
+        continue;
+      }
+      else
       {
         trimmed = curChar + trimmed;
+        foundNonSpaceChars = true;
       }
     }
 
