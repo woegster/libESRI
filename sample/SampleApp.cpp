@@ -1,7 +1,7 @@
 #include "../bindings/esri.hpp"
 #include <iostream>
 #include <thread>
-
+#include <cstring>
 
 class MyEsriClient : public IEsriClient
 {
