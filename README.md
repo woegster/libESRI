@@ -2,9 +2,9 @@
 A telnet framework for applications
 
 ## The Problem
-**As a developer/maintainer** of a (legacy) "Big Business App"
-**I want to** execute my code without using the offical frontend
-**So that** i can test my code independet of the frontend
+**As a developer/maintainer** of a (legacy) "Big Business App"  
+**I want to** execute my code without using the offical frontend  
+**So that** i can test my code independet of the frontend  
 
 Assumed that on one or more things apply
 - There are no tests fo the apllication
@@ -15,8 +15,7 @@ Assumed that on one or more things apply
 This was the situation that lead to the development of ESRI.
 
 ## The Solution
-Integrate a telnet server into the application as frontend replacement.
-With this the code you write can always easily be executed.
+Integrate a telnet server into the application as frontend replacement.  
 *Disclaimer: It's of course still a hack and you should not need it in the first place*
 
 ## Usage
@@ -32,7 +31,7 @@ With this the code you write can always easily be executed.
 - **C API** allows most languages to call the library as well
 - **Crossplattform** thanks to CMake
  
-See the **Advanced Usage & Features** Wiki for more things like autocomplete and batch processing.
+See the Wiki for more things like autocomplete and batch processing.
 
 ## Requirements
 * A C++11 compiler
