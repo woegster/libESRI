@@ -15,7 +15,6 @@ namespace libESRI
     , m_Terminal(m_Telnet)//holy fuck
   {
     m_handler = handlerFactory.CreateNewHandler(m_Terminal);
-    m_InternalHandler.reset(new EsriInternalCommands(*m_handler));
   }
 
   bool EsriClientThread::isControlCodeToDisconnect(const char controlCode)
@@ -42,15 +41,18 @@ namespace libESRI
   
   void EsriClientThread::SetAutocompleteToNtshell(ntshell_t& shell)
   {
-    auto* allCommandsAsString = m_handler->OnProvideCommands();
-    if (allCommandsAsString)
+    auto allCommandsAsString = m_InternalHandler.ProvideInternalCommands();
+    auto* userCommands = m_handler->OnProvideCommands();
+    if (userCommands)
     {
-      ntshell_completition_reset(&shell);
-      auto allCommands = toni::Tokenize<std::string>(allCommandsAsString, ";");
-      for (size_t i = 0; i < allCommands.size(); i++)
-      {
-        ntshell_completition_setAt(&shell, i, allCommands[i].c_str());
-      }
+      allCommandsAsString += userCommands;
+    }
+
+    ntshell_completition_reset(&shell);
+    auto allCommands = toni::Tokenize<std::string>(allCommandsAsString, ";");
+    for (size_t i = 0; i < allCommands.size(); i++)
+    {
+      ntshell_completition_setAt(&shell, i, allCommands[i].c_str());
     }
   }
 
@@ -96,7 +98,11 @@ namespace libESRI
 
   int EsriClientThread::OnShellCallback(const char* textFromTerminal)
   {
-    m_handler->OnCommitCommand(textFromTerminal);
+    const auto trimmed = toni::TrimRight<std::string>(textFromTerminal);
+    if (!m_InternalHandler.ExecuteInternalCommand(trimmed, m_Telnet))
+    {
+      m_handler->OnCommitCommand(trimmed.c_str());
+    }    
     return 0;
   }
   

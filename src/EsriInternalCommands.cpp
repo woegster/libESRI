@@ -5,30 +5,29 @@
 #include <sstream>
 #include <iomanip>
 #include "OsTools.h"
+#include "TelnetConnection.h"
 
 namespace libESRI
 {
-  EsriInternalCommands::EsriInternalCommands(EsriHandler& realHandler)
-    : m_realHandler(realHandler)
+  EsriInternalCommands::EsriInternalCommands()
   {
     BuildCommandTable();
 
     m_InternalCommandsAsString = "";
     for (auto& command : m_internalFunctionMap)
     {
-      m_InternalCommandsAsString += ";";
       m_InternalCommandsAsString += command.first;
+      m_InternalCommandsAsString += ";";
     }
   }
 
-  bool EsriInternalCommands::ExecuteInternalCommand(const std::string & command)
+  bool EsriInternalCommands::ExecuteInternalCommand(const std::string& command, TelnetConnection& outputTo)
   {
     auto functionToExecute = m_internalFunctionMap.find(command);
     if (functionToExecute != m_internalFunctionMap.end())
     {
       std::string functionResult = functionToExecute->second();
-      m_realHandler.SendToTerminal(functionResult.c_str());
-      Prompt();
+      outputTo.WriteText(functionResult.c_str(), functionResult.length());
       return true;
     }
 
@@ -38,17 +37,10 @@ namespace libESRI
   {
     return m_InternalCommandsAsString;
   }
-  void EsriInternalCommands::Prompt()
-  {
-    std::string curDir = m_realHandler.OnGetCurrentDirectory();
-    curDir += ">";
-    m_realHandler.SendToTerminal(curDir.c_str());
-  }
 
   void EsriInternalCommands::BuildCommandTable()
   {
     m_internalFunctionMap["memstat"] = std::bind(&EsriInternalCommands::memstat, this);
-    m_internalFunctionMap["uptime"] = std::bind(&EsriInternalCommands::memstat, this);
   }
 
   std::string EsriInternalCommands::memstat()
@@ -56,7 +48,7 @@ namespace libESRI
     double memSizeMiB = (double)OsTools::GetMemUsageOfCurrentProcessBytes();
     memSizeMiB /= 1024.0 * 1024.0;
     std::stringstream formatter;
-    formatter << "\r\nHost App Memory Usage: " << std::setw(12) << std::setfill(' ') << std::setprecision(7) << memSizeMiB << " MiB\r\n";
+    formatter << "Host App Memory Usage: " << std::setw(12) << std::setfill(' ') << std::setprecision(7) << memSizeMiB << " MiB";
     return formatter.str();
   }
 }

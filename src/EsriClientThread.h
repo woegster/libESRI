@@ -4,12 +4,12 @@
 #include "EsriTerminal.h"
 #include <memory>
 #include <ntshell.h>
+#include "EsriInternalCommands.h"
 
 namespace libESRI
 {
   class EsriHandlerFactory;
   class EsriHandler;
-  class EsriInternalCommands;
 
   class EsriClientThread
   {
@@ -25,8 +25,8 @@ namespace libESRI
   private:
     static bool isControlCodeToDisconnect(const char controlCode);
   private:
-    std::unique_ptr<EsriInternalCommands> m_InternalHandler;
     std::unique_ptr<EsriHandler> m_handler;
+    EsriInternalCommands m_InternalHandler;
     TelnetConnection m_Telnet;
     EsriTerminal m_Terminal;
   };

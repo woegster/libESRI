@@ -4,6 +4,21 @@
 
 namespace toni
 {
+  namespace details
+  {
+    bool isWhitespace(const char ch)
+    {
+      switch (ch)
+      {
+        case ' ':
+        case '\t':
+          return true;
+      }
+
+      return false;
+    }
+  }
+
   template<class stringClass>
   void ReplaceAll(stringClass& source, const stringClass& what, const stringClass& with)
   {
@@ -37,5 +52,21 @@ namespace toni
     }
 
     return result;
+  }
+
+  template<class stringClass>
+  stringClass TrimRight(const stringClass& source)
+  {
+    stringClass trimmed;
+    for (size_t i = source.length()-1; i >= 0 && i != stringClass::npos; --i)
+    {
+      const auto curChar = source[i];
+      if (!details::isWhitespace(curChar))
+      {
+        trimmed = curChar + trimmed;
+      }
+    }
+
+    return trimmed;
   }
 }
